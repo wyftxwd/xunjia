@@ -823,8 +823,9 @@ const T = {
 };
 
 let lang = localStorage.getItem('xj_lang') || 'en';
-let currentMode = 'FCL';
+let currentMode = 'SEA';
 let savedCode = '';
+const refParam = new URLSearchParams(window.location.search).get('ref') || '';
 
 function t(key){ return T[lang][key] || key; }
 
@@ -882,7 +883,7 @@ function selectMode(card){
   card.classList.add('selected');
   currentMode = card.dataset.mode;
   const cf = document.getElementById('containerFields');
-  if(currentMode === 'FCL') cf.classList.add('show');
+  if(currentMode === 'SEA') cf.classList.add('show');
   else cf.classList.remove('show');
 }
 
@@ -1039,14 +1040,15 @@ document.getElementById('inquiryForm').addEventListener('submit', async function
     grossWeight: document.getElementById('grossWeight').value,
     volume: document.getElementById('volume').value,
     pieces: document.getElementById('pieces').value,
-    containerType: currentMode === 'FCL' ? document.getElementById('containerType').value : '',
-    containerQty: currentMode === 'FCL' ? document.getElementById('containerQty').value : '',
+    containerType: currentMode === 'SEA' ? document.getElementById('containerType').value : '',
+    containerQty: currentMode === 'SEA' ? document.getElementById('containerQty').value : '',
     cargoCategory,
     companyName: document.getElementById('companyName').value.trim(),
     contactPerson: document.getElementById('contactPerson').value.trim(),
     email: document.getElementById('email').value.trim(),
     phone: document.getElementById('phone').value.trim(),
     remarks: document.getElementById('remarks').value.trim(),
+    referrer: refParam,
     lang
   };
 

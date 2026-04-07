@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -169,6 +170,39 @@ h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
 .inquiry-summary .is-label{color:var(--text3)}
 .inquiry-summary .is-val{font-weight:500;color:var(--text)}
 .hidden{display:none!important}
+
+/* ---------- Share Modal ---------- */
+.share-btn{
+  display:flex;align-items:center;gap:6px;padding:8px 16px;
+  border-radius:8px;border:1.5px solid var(--pri);
+  background:rgba(37,99,235,.06);color:var(--pri);
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
+  font-family:inherit;
+}
+.share-btn:hover{background:rgba(37,99,235,.12)}
+.share-btn svg{width:15px;height:15px}
+.share-result{margin-top:16px;display:none}
+.share-result.show{display:block}
+.share-link-box{
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.share-link-box input{
+  flex:1;padding:9px 12px;font-size:13px;
+  border:1.5px solid var(--border);border-radius:8px;
+  background:var(--border-l);color:var(--text);outline:none;
+  font-family:'Outfit',monospace;
+}
+.share-link-box .copy-btn{
+  padding:9px 14px;border-radius:8px;border:none;
+  background:var(--pri);color:#fff;font-size:12px;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:background .15s;
+}
+.share-link-box .copy-btn:hover{background:var(--pri-d)}
+.share-qr-wrap{
+  display:flex;justify-content:center;padding:16px;
+  background:var(--border-l);border-radius:10px;
+}
+.share-qr-wrap canvas{border-radius:6px}
 </style>
 </head>
 <body>
@@ -203,10 +237,19 @@ h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
     </div>
   </div>
 
-  <div class="filter-bar">
-    <div class="filter-tab active" data-filter="all" onclick="setFilter(this)">全部 All</div>
-    <div class="filter-tab" data-filter="pending" onclick="setFilter(this)">待报价 Pending</div>
-    <div class="filter-tab" data-filter="quoted" onclick="setFilter(this)">已报价 Quoted</div>
+  <div class="filter-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <div class="filter-tab active" data-filter="all" onclick="setFilter(this)">全部 All</div>
+      <div class="filter-tab" data-filter="pending" onclick="setFilter(this)">待报价 Pending</div>
+      <div class="filter-tab" data-filter="quoted" onclick="setFilter(this)">已报价 Quoted</div>
+      <select id="refFilter" onchange="renderTable()" style="margin-left:8px;padding:5px 10px;font-size:12.5px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text2);outline:none;cursor:pointer;font-family:inherit;">
+        <option value="">全部来源 All Sources</option>
+      </select>
+    </div>
+    <button class="share-btn" onclick="openShareModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      生成链接 Share
+    </button>
   </div>
 
   <div class="table-wrap">
@@ -218,6 +261,7 @@ h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
           <th>运输方式 Mode</th>
           <th>贸易条款</th>
           <th>公司 Company</th>
+          <th>来源 Referrer</th>
           <th>状态 Status</th>
           <th>提交时间</th>
           <th>操作 Action</th>
@@ -297,6 +341,40 @@ h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
   </div>
 </div>
 
+<!-- Share Modal -->
+<div class="modal-bg" id="shareModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <h3>生成分享链接 Generate Share Link</h3>
+      <button class="modal-close" onclick="closeShareModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="mfield">
+        <label>标识名 Your Name / ID *</label>
+        <input type="text" id="shareRefName" placeholder="例：张三 / ZS001">
+      </div>
+      <div class="mfield">
+        <label>网站地址 Site URL</label>
+        <input type="text" id="shareSiteUrl" placeholder="稍后配置">
+      </div>
+      <div style="text-align:center;margin-top:6px;">
+        <button class="btn btn-submit" onclick="generateShareLink()" style="padding:9px 28px;border-radius:8px;border:none;background:var(--pri);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;">生成 Generate</button>
+      </div>
+      <div class="share-result" id="shareResult">
+        <div style="font-size:12.5px;color:var(--text2);margin-bottom:6px;font-weight:500;">分享链接 Share Link</div>
+        <div class="share-link-box">
+          <input type="text" id="shareLinkOutput" readonly>
+          <button class="copy-btn" onclick="copyShareLink()">复制 Copy</button>
+        </div>
+        <div style="font-size:12.5px;color:var(--text2);margin-bottom:8px;font-weight:500;">二维码 QR Code</div>
+        <div class="share-qr-wrap">
+          <div id="shareQrCode"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 let allData = [];
 let currentFilter = 'all';
@@ -310,8 +388,17 @@ async function loadData(){
     const res = await fetch('/api/admin/inquiries');
     allData = await res.json();
     updateStats();
+    updateRefFilter();
     renderTable();
   }catch(e){ console.error(e); }
+}
+
+function updateRefFilter(){
+  const sel = document.getElementById('refFilter');
+  const current = sel.value;
+  const refs = [...new Set(allData.map(i=>i.referrer).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">全部来源 All Sources</option>' + refs.map(r => `<option value="${r}">${r}</option>`).join('');
+  sel.value = current;
 }
 
 function updateStats(){
@@ -334,7 +421,9 @@ function renderTable(){
   const tbody = document.getElementById('tableBody');
   const empty = document.getElementById('emptyState');
   let filtered = allData;
-  if(currentFilter !== 'all') filtered = allData.filter(i=>i.status===currentFilter);
+  if(currentFilter !== 'all') filtered = filtered.filter(i=>i.status===currentFilter);
+  const refVal = document.getElementById('refFilter').value;
+  if(refVal) filtered = filtered.filter(i=>i.referrer===refVal);
 
   if(!filtered.length){
     tbody.innerHTML = '';
@@ -350,6 +439,7 @@ function renderTable(){
       <td>${MODE_MAP[i.shipmentMode]||i.shipmentMode}</td>
       <td>${i.tradeTerms}</td>
       <td>${i.companyName}<br><span style="font-size:12px;color:var(--text3)">${i.contactPerson}</span></td>
+      <td>${i.referrer ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;background:rgba(37,99,235,.08);color:var(--pri);font-size:11.5px;font-weight:500;">${i.referrer}</span>` : '<span style="color:var(--text3);font-size:12px;">—</span>'}</td>
       <td><span class="badge ${i.status}"><i data-lucide="${i.status==='quoted'?'check-circle':'clock'}"></i>${i.status==='quoted'?'已报价 Quoted':'待报价 Pending'}</span></td>
       <td class="date-cell">${new Date(i.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
       <td>
@@ -457,6 +547,40 @@ async function deleteInquiry(code){
     await fetch(`/api/admin/inquiry/${code}`,{method:'DELETE'});
     loadData();
   }catch(e){ console.error(e); }
+}
+
+// ======================= Share Link =======================
+function openShareModal(){
+  document.getElementById('shareRefName').value = '';
+  document.getElementById('shareSiteUrl').value = '';
+  document.getElementById('shareResult').classList.remove('show');
+  document.getElementById('shareQrCode').innerHTML = '';
+  document.getElementById('shareModal').classList.add('show');
+  lucide.createIcons();
+}
+function closeShareModal(){ document.getElementById('shareModal').classList.remove('show'); }
+
+function generateShareLink(){
+  const name = document.getElementById('shareRefName').value.trim();
+  if(!name){ alert('请输入标识名 / Please enter your name or ID'); return; }
+  const siteUrl = document.getElementById('shareSiteUrl').value.trim();
+  const base = siteUrl || window.location.origin;
+  const url = `${base}?ref=${encodeURIComponent(name)}`;
+  document.getElementById('shareLinkOutput').value = url;
+  const qrWrap = document.getElementById('shareQrCode');
+  qrWrap.innerHTML = '';
+  new QRCode(qrWrap, { text: url, width: 180, height: 180, colorDark: '#0F172A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  document.getElementById('shareResult').classList.add('show');
+}
+
+function copyShareLink(){
+  const input = document.getElementById('shareLinkOutput');
+  input.select();
+  document.execCommand('copy');
+  const btn = input.nextElementSibling;
+  const orig = btn.textContent;
+  btn.textContent = '已复制!';
+  setTimeout(()=>{ btn.textContent = orig; }, 1500);
 }
 
 loadData();

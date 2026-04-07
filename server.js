@@ -230,6 +230,7 @@ app.post('/api/inquiry', async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       remarks: req.body.remarks || '',
+      referrer: req.body.referrer || '',
       lang: req.body.lang || 'zh',
       status: 'pending',
       quote: null,
