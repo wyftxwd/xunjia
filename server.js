@@ -5,7 +5,8 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const IS_VERCEL = process.env.VERCEL === '1';
+const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'inquiries.json');
 
 // --------------- SMTP Config (placeholder – fill in later) ---------------
@@ -239,8 +240,12 @@ app.delete('/api/admin/inquiry/:code', (req, res) => {
 });
 
 // --------------- Start ---------------
-app.listen(PORT, () => {
-  console.log(`\n  SEAWIN Server  →  http://localhost:${PORT}`);
-  console.log(`  Admin Panel    →  http://localhost:${PORT}/admin.html`);
-  console.log(`  SMTP Status    →  ${SMTP_HOST ? 'Configured ✓' : 'Not configured (emails logged to console)'}\n`);
-});
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`\n  SEAWIN Server  →  http://localhost:${PORT}`);
+    console.log(`  Admin Panel    →  http://localhost:${PORT}/admin.html`);
+    console.log(`  SMTP Status    →  ${SMTP_HOST ? 'Configured ✓' : 'Not configured (emails logged to console)'}\n`);
+  });
+}
+
+module.exports = app;
