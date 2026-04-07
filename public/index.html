@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SEAWIN 海盟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pri:#2563EB;--pri-l:#3B82F6;--pri-d:#1D4ED8;
+  --accent:#F97316;--success:#10B981;--warn:#F59E0B;--err:#EF4444;
+  --bg:#F0F4FF;--card:#fff;--text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --border:#E2E8F0;--border-l:#F1F5F9;
+  --r-card:16px;--r-input:10px;--r-btn:10px;--r-pill:20px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 24px rgba(37,99,235,.1),0 2px 8px rgba(0,0,0,.04);
+}
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Work Sans','Noto Sans SC',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;min-height:100dvh;
+  overscroll-behavior-y:contain;
+}
+h1,h2,h3,h4{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
+input,select,textarea,button{font-family:inherit;font-size:inherit}
+
+/* ---------- Header ---------- */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(240,244,255,.82);
+  border-bottom:1px solid rgba(226,232,240,.6);
+  padding:0 20px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-brand{display:flex;align-items:center;gap:8px}
+.header-brand .logo{
+  height:30px;width:auto;
+}
+.header-brand .name{font-size:17px;font-weight:600;color:var(--text);font-family:'Outfit','Noto Sans SC',sans-serif}
+.lang-btn{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.15);
+  border-radius:var(--r-pill);padding:6px 14px;
+  font-size:13px;font-weight:500;color:var(--pri);cursor:pointer;
+  transition:all .2s;
+}
+.lang-btn:active{transform:scale(.96);background:rgba(37,99,235,.15)}
+.admin-link{
+  font-size:11px;color:#ccc;text-decoration:none;
+  padding:4px 8px;border-radius:4px;
+  transition:color .2s;
+}
+.admin-link:hover{color:#aaa}
+.lang-btn svg{width:15px;height:15px}
+
+/* ---------- Main ---------- */
+.main{padding:72px 16px 90px;max-width:480px;margin:0 auto}
+
+/* ---------- View transitions ---------- */
+.view{display:none;animation:fadeUp .35s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- Section card ---------- */
+.section{
+  background:var(--card);border-radius:var(--r-card);
+  box-shadow:var(--shadow);padding:20px;margin-bottom:14px;
+  border:1px solid var(--border-l);
+}
+.section-title{
+  font-size:14px;font-weight:600;color:var(--text);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.section-title::before{
+  content:'';width:3px;height:16px;border-radius:2px;
+  background:linear-gradient(180deg,var(--pri),var(--pri-l));
+}
+
+/* ---------- Transport Mode Grid ---------- */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 8px;border-radius:12px;border:1.5px solid var(--border);
+  cursor:pointer;transition:all .2s;background:var(--card);
+}
+.mode-card:active{transform:scale(.97)}
+.mode-card.selected{
+  border-color:var(--pri);background:rgba(37,99,235,.06);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+.mode-card .icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--border-l);color:var(--text2);transition:all .2s;
+}
+.mode-card.selected .icon{background:var(--pri);color:#fff}
+.mode-card .icon svg{width:20px;height:20px}
+.mode-card .label{font-size:13px;font-weight:500;color:var(--text);text-align:center;line-height:1.3}
+.mode-card .sub{font-size:11px;color:var(--text3);font-weight:400}
+
+/* ---------- Form elements ---------- */
+.field{margin-bottom:14px;position:relative}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.field label .req{color:var(--err);margin-left:2px}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;font-size:14.5px;
+  border:1.5px solid var(--border);border-radius:var(--r-input);
+  background:var(--card);color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;box-sizing:border-box;
+}
+.field input:not([type="hidden"]),.field select{height:44px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3);font-weight:300}
+.field textarea{resize:vertical;min-height:72px}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394A3B8' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field .error-msg{font-size:11.5px;color:var(--err);margin-top:4px;display:none}
+.field.has-error input,.field.has-error select,.field.has-error textarea{border-color:var(--err)}
+.field.has-error .dp-trigger{border-color:var(--err)}
+
+/* ---------- Custom Date Picker ---------- */
+.dp-trigger{
+  width:100%;padding:10px 12px;font-size:14.5px;height:44px;
+  border:1.5px solid var(--border);border-radius:var(--r-input);
+  background:var(--card);color:var(--text);outline:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  transition:border-color .2s,box-shadow .2s;
+  user-select:none;box-sizing:border-box;
+}
+.dp-trigger:focus,.dp-trigger.open{border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.dp-trigger .dp-text{color:var(--text)}
+.dp-trigger .dp-placeholder{color:var(--text3);font-weight:300}
+.dp-trigger svg{width:16px;height:16px;color:var(--text3);flex-shrink:0}
+.dp-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:100;
+  background:var(--card);border:1.5px solid var(--border);border-radius:14px;
+  box-shadow:0 12px 36px rgba(0,0,0,.12);padding:14px;
+  animation:dpIn .2s ease;
+}
+@keyframes dpIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.dp-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.dp-nav-btn{
+  width:30px;height:30px;border:none;border-radius:8px;
+  background:var(--border-l);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;transition:all .15s;color:var(--text2);
+}
+.dp-nav-btn:hover{background:var(--pri);color:#fff}
+.dp-nav-btn svg{width:16px;height:16px}
+.dp-month-year{font-size:14px;font-weight:600;color:var(--text)}
+.dp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px}
+.dp-weekdays span{font-size:11px;font-weight:500;color:var(--text3);padding:4px 0}
+.dp-days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:2px}
+.dp-day{
+  padding:7px 0;font-size:13px;border-radius:8px;cursor:pointer;
+  transition:all .15s;color:var(--text);position:relative;
+}
+.dp-day:hover{background:rgba(37,99,235,.08)}
+.dp-day.today{font-weight:700;color:var(--pri)}
+.dp-day.today::after{
+  content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--pri);
+}
+.dp-day.selected{background:var(--pri);color:#fff;font-weight:600}
+.dp-day.selected::after{background:#fff}
+.dp-day.other{color:var(--text3);opacity:.4}
+.dp-day.disabled{opacity:.2;cursor:default;pointer-events:none}
+.dp-today-btn{
+  display:block;width:100%;margin-top:8px;padding:7px;border:none;
+  border-radius:8px;background:rgba(37,99,235,.06);color:var(--pri);
+  font-size:12px;font-weight:500;cursor:pointer;transition:background .15s;
+}
+.dp-today-btn:hover{background:rgba(37,99,235,.12)}
+.field.has-error .error-msg{display:block}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ---------- Cargo category chips ---------- */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 14px;border-radius:var(--r-pill);
+  border:1.5px solid var(--border);font-size:13px;font-weight:400;
+  color:var(--text2);cursor:pointer;transition:all .2s;
+  user-select:none;
+}
+.chip:active{transform:scale(.96)}
+.chip.selected{border-color:var(--accent);background:rgba(249,115,22,.07);color:var(--accent);font-weight:500}
+.chip svg{width:14px;height:14px}
+
+/* ---------- Container fields (FCL only) ---------- */
+.container-fields{
+  overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .35s ease,opacity .25s ease,margin .25s ease;
+  margin-top:0;
+}
+.container-fields.show{max-height:200px;opacity:1;margin-top:14px}
+
+/* ---------- Submit button ---------- */
+.submit-btn{
+  width:100%;padding:14px;font-size:15px;font-weight:600;
+  border:none;border-radius:var(--r-btn);cursor:pointer;
+  background:linear-gradient(135deg,var(--pri),var(--pri-d));
+  color:#fff;letter-spacing:.3px;
+  box-shadow:0 4px 14px rgba(37,99,235,.3);
+  transition:all .2s;margin-top:6px;
+}
+.submit-btn:active{transform:scale(.98);box-shadow:0 2px 8px rgba(37,99,235,.2)}
+.submit-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.submit-btn .spinner{
+  display:inline-block;width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;
+  margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Bottom Tab Bar ---------- */
+.tab-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(255,255,255,.88);
+  border-top:1px solid rgba(226,232,240,.6);
+  display:flex;height:64px;
+  padding-bottom:env(safe-area-inset-bottom,0);
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;cursor:pointer;
+  color:var(--text3);transition:color .2s;position:relative;
+  border:none;background:none;outline:none;
+}
+.tab-item.active{color:var(--pri)}
+.tab-item.active::before{
+  content:'';position:absolute;top:-1px;left:25%;right:25%;
+  height:2.5px;border-radius:0 0 2px 2px;background:var(--pri);
+}
+.tab-item svg{width:22px;height:22px}
+.tab-item span{font-size:11px;font-weight:500}
+
+/* ---------- Query View ---------- */
+.query-hero{text-align:center;padding:30px 0 20px}
+.query-hero .icon-wrap{
+  width:72px;height:72px;border-radius:20px;margin:0 auto 16px;
+  background:linear-gradient(135deg,rgba(37,99,235,.1),rgba(37,99,235,.05));
+  display:flex;align-items:center;justify-content:center;
+  color:var(--pri);
+}
+.query-hero .icon-wrap svg{width:34px;height:34px}
+.query-hero h2{font-size:20px;color:var(--text);margin-bottom:6px}
+.query-hero p{font-size:13.5px;color:var(--text3);line-height:1.5}
+
+.query-input-wrap{
+  display:flex;gap:10px;margin-bottom:20px;
+}
+.query-input-wrap input{
+  flex:1;padding:12px 14px;font-size:16px;letter-spacing:2px;
+  text-align:center;font-weight:500;
+  border:1.5px solid var(--border);border-radius:var(--r-input);
+  background:var(--card);color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.query-input-wrap input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.query-btn{
+  padding:12px 22px;font-size:14px;font-weight:600;
+  border:none;border-radius:var(--r-btn);cursor:pointer;
+  background:linear-gradient(135deg,var(--pri),var(--pri-d));
+  color:#fff;white-space:nowrap;display:flex;align-items:center;gap:6px;
+  box-shadow:0 4px 14px rgba(37,99,235,.25);transition:all .2s;
+}
+.query-btn:active{transform:scale(.97)}
+.query-btn:disabled{opacity:.55;cursor:not-allowed}
+.query-btn svg{width:18px;height:18px}
+
+/* ---------- Query Result ---------- */
+.result-card{
+  background:var(--card);border-radius:var(--r-card);
+  box-shadow:var(--shadow);padding:20px;
+  border:1px solid var(--border-l);
+  animation:fadeUp .4s ease;
+}
+.result-status{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 14px;border-radius:var(--r-pill);
+  font-size:12.5px;font-weight:600;margin-bottom:14px;
+}
+.result-status.pending{background:rgba(245,158,11,.1);color:var(--warn)}
+.result-status.quoted{background:rgba(16,185,129,.1);color:var(--success)}
+.result-status.not-found{background:rgba(239,68,68,.08);color:var(--err)}
+.result-status svg{width:15px;height:15px}
+.result-msg{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:4px}
+.result-detail{font-size:12.5px;color:var(--text3);line-height:1.6}
+.result-divider{height:1px;background:var(--border-l);margin:16px 0}
+.result-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0}
+.result-row .rlabel{font-size:12.5px;color:var(--text3);flex-shrink:0}
+.result-row .rvalue{font-size:13.5px;color:var(--text);font-weight:500;text-align:right;max-width:60%}
+.quote-price{
+  text-align:center;padding:16px;margin:12px 0;
+  background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(16,185,129,.02));
+  border-radius:12px;border:1px solid rgba(16,185,129,.15);
+}
+.quote-price .amount{font-size:28px;font-weight:700;color:var(--success);font-family:'Outfit',sans-serif}
+.quote-price .cur{font-size:14px;color:var(--success);font-weight:500;margin-right:4px}
+
+/* ---------- Success Modal ---------- */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(15,23,42,.45);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.modal-overlay.show{display:flex}
+.modal-box{
+  background:var(--card);border-radius:20px;width:100%;max-width:360px;
+  padding:32px 24px 24px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+  animation:modalIn .35s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-icon{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
+  background:linear-gradient(135deg,var(--success),#059669);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(16,185,129,.3);
+}
+.modal-icon svg{width:32px;height:32px;color:#fff}
+.modal-title{font-size:20px;font-weight:600;margin-bottom:8px}
+.modal-subtitle{font-size:13.5px;color:var(--text2);margin-bottom:20px;line-height:1.5}
+.code-display{
+  background:linear-gradient(135deg,var(--pri),var(--pri-d));
+  color:#fff;border-radius:12px;padding:18px;margin-bottom:12px;
+}
+.code-display .code-label{font-size:12px;opacity:.8;margin-bottom:6px}
+.code-display .code-value{font-size:30px;font-weight:700;letter-spacing:4px;font-family:'Outfit',monospace}
+.copy-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 18px;border-radius:var(--r-pill);
+  border:1.5px solid var(--border);background:var(--card);
+  color:var(--text2);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;margin-bottom:16px;
+}
+.copy-btn:active{transform:scale(.96)}
+.copy-btn.copied{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.05)}
+.copy-btn svg{width:14px;height:14px}
+.modal-tip{font-size:12px;color:var(--text3);margin-bottom:18px;line-height:1.5}
+.modal-close-btn{
+  width:100%;padding:12px;border:none;border-radius:var(--r-btn);
+  background:var(--border-l);color:var(--text);font-size:14px;
+  font-weight:500;cursor:pointer;transition:all .2s;
+}
+.modal-close-btn:active{background:var(--border)}
+
+/* ---------- Utilities ---------- */
+.hidden{display:none!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="header">
+  <div class="header-brand">
+    <img class="logo" src="/logo.png" alt="SEAWIN">
+    <span class="name" data-i18n="brand"></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;">
+  <a href="/admin.html" class="admin-link">Admin</a>
+  <button class="lang-btn" onclick="toggleLang()">
+    <i data-lucide="globe"></i>
+    <span id="langLabel">EN</span>
+  </button>
+  </div>
+</header>
+
+<!-- ==================== INQUIRY VIEW ==================== -->
+<main class="main">
+<div id="view-inquiry" class="view active">
+  <form id="inquiryForm" autocomplete="off" novalidate>
+
+    <!-- Transport Mode -->
+    <div class="section">
+      <div class="section-title" data-i18n="sectionTransport"></div>
+      <div class="mode-grid">
+        <div class="mode-card selected" data-mode="SEA" onclick="selectMode(this)">
+          <div class="icon"><i data-lucide="ship"></i></div>
+          <div class="label" data-i18n="modeSea"></div>
+          <div class="sub">Sea Freight</div>
+        </div>
+        <div class="mode-card" data-mode="AIR" onclick="selectMode(this)">
+          <div class="icon"><i data-lucide="plane"></i></div>
+          <div class="label" data-i18n="modeAir"></div>
+          <div class="sub">Air Freight</div>
+        </div>
+        <div class="mode-card" data-mode="RAIL" onclick="selectMode(this)">
+          <div class="icon"><i data-lucide="train-front"></i></div>
+          <div class="label" data-i18n="modeRail"></div>
+          <div class="sub">Railway</div>
+        </div>
+        <div class="mode-card" data-mode="ROAD" onclick="selectMode(this)">
+          <div class="icon"><i data-lucide="truck"></i></div>
+          <div class="label" data-i18n="modeRoad"></div>
+          <div class="sub">Road</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route Information -->
+    <div class="section">
+      <div class="section-title" data-i18n="sectionRoute"></div>
+      <div class="field">
+        <label data-i18n="origin"><span class="req">*</span></label>
+        <input type="text" id="origin" required data-i18n-ph="originPh">
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+      <div class="field">
+        <label data-i18n="destination"><span class="req">*</span></label>
+        <input type="text" id="destination" required data-i18n-ph="destinationPh">
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label data-i18n="incoterms"><span class="req">*</span></label>
+          <select id="tradeTerms" required>
+            <option value="FOB">FOB</option>
+            <option value="CIF">CIF</option>
+            <option value="CFR">CFR</option>
+            <option value="EXW">EXW</option>
+            <option value="DDP">DDP</option>
+            <option value="DDU">DDU</option>
+            <option value="DAP">DAP</option>
+            <option value="FCA">FCA</option>
+            <option value="CPT">CPT</option>
+            <option value="CIP">CIP</option>
+          </select>
+        </div>
+        <div class="field" id="dpField">
+          <label data-i18n="cargoReadyDate"><span class="req">*</span></label>
+          <input type="hidden" id="cargoReadyDate" required>
+          <div class="dp-trigger" id="dpTrigger" tabindex="0">
+            <span class="dp-placeholder" id="dpDisplay" data-i18n="dpPlaceholder"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="dp-dropdown" id="dpDropdown" style="display:none"></div>
+          <div class="error-msg" data-i18n="required"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cargo Details -->
+    <div class="section">
+      <div class="section-title" data-i18n="sectionCargo"></div>
+      <div class="field">
+        <label data-i18n="commodity"><span class="req">*</span></label>
+        <input type="text" id="commodity" required data-i18n-ph="commodityPh">
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label data-i18n="grossWeight"><span class="req">*</span></label>
+          <input type="number" id="grossWeight" min="0" step="0.01" required inputmode="decimal">
+          <div class="error-msg" data-i18n="required"></div>
+        </div>
+        <div class="field">
+          <label data-i18n="volume"><span class="req">*</span></label>
+          <input type="number" id="volume" min="0" step="0.001" required inputmode="decimal">
+          <div class="error-msg" data-i18n="required"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label data-i18n="pieces"><span class="req">*</span></label>
+        <input type="number" id="pieces" min="1" required inputmode="numeric">
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+
+      <!-- Container fields – FCL only -->
+      <div class="container-fields show" id="containerFields">
+        <div class="field-row">
+          <div class="field">
+            <label data-i18n="containerType"></label>
+            <select id="containerType">
+              <option value="20GP">20GP</option>
+              <option value="40GP">40GP</option>
+              <option value="40HQ" selected>40HQ</option>
+              <option value="45HQ">45HQ</option>
+              <option value="20OT">20OT</option>
+              <option value="40OT">40OT</option>
+              <option value="20FR">20FR</option>
+              <option value="40FR">40FR</option>
+              <option value="20RF">20RF</option>
+              <option value="40RF">40RF</option>
+            </select>
+          </div>
+          <div class="field">
+            <label data-i18n="containerQty"></label>
+            <input type="number" id="containerQty" min="1" value="1" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Cargo -->
+      <div style="margin-top:14px">
+        <label style="display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-bottom:8px" data-i18n="cargoCategory"></label>
+        <div class="chip-group">
+          <div class="chip" data-special="PRE_PACKED" onclick="toggleChip(this)">
+            <i data-lucide="package-check"></i>
+            <span data-i18n="prePackedFood"></span>
+          </div>
+          <div class="chip" data-special="NON_ALCOHOL" onclick="toggleChip(this)">
+            <i data-lucide="cup-soda"></i>
+            <span data-i18n="nonAlcoholDrink"></span>
+          </div>
+          <div class="chip" data-special="ALCOHOL" onclick="toggleChip(this)">
+            <i data-lucide="wine"></i>
+            <span data-i18n="alcoholDrink"></span>
+          </div>
+          <div class="chip" data-special="PET_FOOD" onclick="toggleChip(this)">
+            <i data-lucide="paw-print"></i>
+            <span data-i18n="petFood"></span>
+          </div>
+          <div class="chip" data-special="FRESH" onclick="toggleChip(this)">
+            <i data-lucide="leaf"></i>
+            <span data-i18n="freshFood"></span>
+          </div>
+          <div class="chip" data-special="FROZEN" onclick="toggleChip(this)">
+            <i data-lucide="snowflake"></i>
+            <span data-i18n="frozenFood"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="section">
+      <div class="section-title" data-i18n="sectionContact"></div>
+      <div class="field">
+        <label data-i18n="companyName"><span class="req">*</span></label>
+        <input type="text" id="companyName" required>
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+      <div class="field">
+        <label data-i18n="contactPerson"><span class="req">*</span></label>
+        <input type="text" id="contactPerson" required>
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+      <div class="field">
+        <label data-i18n="email"><span class="req">*</span></label>
+        <input type="email" id="email" required inputmode="email">
+        <div class="error-msg" data-i18n="invalidEmail"></div>
+      </div>
+      <div class="field">
+        <label data-i18n="phone"><span class="req">*</span></label>
+        <input type="tel" id="phone" required inputmode="tel">
+        <div class="error-msg" data-i18n="required"></div>
+      </div>
+    </div>
+
+    <!-- Remarks -->
+    <div class="section">
+      <div class="section-title" data-i18n="sectionRemarks"></div>
+      <div class="field">
+        <textarea id="remarks" rows="3" data-i18n-ph="remarksPh"></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <span data-i18n="submitBtn"></span>
+    </button>
+  </form>
+</div>
+
+<!-- ==================== QUERY VIEW ==================== -->
+<div id="view-query" class="view">
+  <div class="query-hero">
+    <div class="icon-wrap"><i data-lucide="search"></i></div>
+    <h2 data-i18n="queryTitle"></h2>
+    <p data-i18n="querySubtitle"></p>
+  </div>
+  <div class="query-input-wrap">
+    <input type="text" id="queryCodeInput" maxlength="8" inputmode="numeric" pattern="\d{8}" data-i18n-ph="queryCodePh">
+    <button class="query-btn" id="queryBtn" onclick="doQuery()">
+      <i data-lucide="search"></i>
+      <span data-i18n="queryBtn"></span>
+    </button>
+  </div>
+  <div id="queryResult"></div>
+</div>
+</main>
+
+<!-- ==================== BOTTOM TAB BAR ==================== -->
+<nav class="tab-bar">
+  <button type="button" class="tab-item active" data-view="view-inquiry" onclick="switchView(this)">
+    <i data-lucide="file-text"></i>
+    <span data-i18n="tabInquiry"></span>
+  </button>
+  <button type="button" class="tab-item" data-view="view-query" onclick="switchView(this)">
+    <i data-lucide="search"></i>
+    <span data-i18n="tabQuery"></span>
+  </button>
+</nav>
+
+<!-- ==================== SUCCESS MODAL ==================== -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box">
+    <div class="modal-icon"><i data-lucide="check"></i></div>
+    <div class="modal-title" data-i18n="successTitle"></div>
+    <div class="modal-subtitle" data-i18n="successMsg"></div>
+    <div class="code-display">
+      <div class="code-label" data-i18n="queryCodeLabel"></div>
+      <div class="code-value" id="modalCode"></div>
+    </div>
+    <button class="copy-btn" id="copyBtn" onclick="copyCode()">
+      <i data-lucide="copy"></i>
+      <span data-i18n="copyCode"></span>
+    </button>
+    <div class="modal-tip" data-i18n="saveCodeTip"></div>
+    <button class="modal-close-btn" onclick="closeModal()" data-i18n="closeModal"></button>
+  </div>
+</div>
+
+<script>
+// ======================= i18n =======================
+const T = {
+  zh: {
+    brand:'海盟询价系统', tabInquiry:'询价', tabQuery:'查询报价',
+    sectionTransport:'运输方式',
+    modeSea:'海运', modeAir:'空运', modeRail:'铁路', modeRoad:'公路',
+    sectionRoute:'路线信息',
+    origin:'起运地', originPh:'例：上海 / CNSHA',
+    destination:'目的地', destinationPh:'例：洛杉矶 / USLAX',
+    incoterms:'贸易条款', cargoReadyDate:'货好日期', dpPlaceholder:'请选择日期', dpToday:'今天',
+    dpMonths:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    dpWeekdays:['日','一','二','三','四','五','六'],
+    sectionCargo:'货物信息',
+    commodity:'品名', commodityPh:'例：电子产品',
+    grossWeight:'毛重 (KG)', volume:'体积 (CBM)', pieces:'件数',
+    containerType:'柜型', containerQty:'柜量',
+    cargoCategory:'货物类别', prePackedFood:'预包装食品', nonAlcoholDrink:'无酒精饮料', alcoholDrink:'含酒精饮料', petFood:'宠物食品', freshFood:'生鲜食品', frozenFood:'冷冻食品',
+    sectionContact:'联系方式',
+    companyName:'公司名称', contactPerson:'联系人', email:'电子邮箱', phone:'联系电话',
+    sectionRemarks:'补充说明', remarksPh:'如有特殊要求请在此说明…',
+    submitBtn:'提交询价', submitting:'提交中…',
+    successTitle:'询价提交成功！', successMsg:'我们将在24小时内为您提供报价',
+    queryCodeLabel:'您的查询码', copyCode:'复制查询码', copied:'已复制！',
+    saveCodeTip:'请妥善保管此查询码，可随时查询报价状态',
+    closeModal:'我知道了',
+    queryTitle:'查询报价', querySubtitle:'输入您的查询码查看报价状态',
+    queryCodePh:'请输入8位查询码', queryBtn:'查询', querying:'查询中…',
+    statusPending:'处理中', statusQuoted:'已报价',
+    pendingMsg:'尚未获得报价，请稍后再来。',
+    pendingDetail:'我们正在为您的询价准备报价，预计24小时内完成。',
+    notFound:'未找到该查询码对应的询价记录',
+    notFoundDetail:'请检查您的查询码是否正确',
+    quoteTitle:'报价详情', totalPrice:'报价金额',
+    transitTime:'运输时效', transitDays:'天',
+    validUntil:'有效期至', breakdown:'费用明细', quoteRemarks:'备注',
+    inquirySummary:'询价信息', route:'路线',
+    required:'此项为必填', invalidEmail:'请输入有效的邮箱地址',
+    modeLabels:{SEA:'海运',AIR:'空运',RAIL:'铁路',ROAD:'公路'},
+  },
+  en: {
+    brand:'SEAWIN Inquiry', tabInquiry:'Inquiry', tabQuery:'Quote Query',
+    sectionTransport:'Shipment Mode',
+    modeSea:'Sea Freight', modeAir:'Air Freight', modeRail:'Railway', modeRoad:'Road',
+    sectionRoute:'Route Information',
+    origin:'Origin', originPh:'e.g. Shanghai / CNSHA',
+    destination:'Destination', destinationPh:'e.g. Los Angeles / USLAX',
+    incoterms:'Incoterms', cargoReadyDate:'Cargo Ready Date', dpPlaceholder:'Select date', dpToday:'Today',
+    dpMonths:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    dpWeekdays:['Su','Mo','Tu','We','Th','Fr','Sa'],
+    sectionCargo:'Cargo Details',
+    commodity:'Commodity', commodityPh:'e.g. Electronics',
+    grossWeight:'Gross Weight (KG)', volume:'Volume (CBM)', pieces:'Pieces',
+    containerType:'Container Type', containerQty:'Container Qty',
+    cargoCategory:'Cargo Category', prePackedFood:'Pre-packed Food', nonAlcoholDrink:'Non-alcoholic Drinks', alcoholDrink:'Alcoholic Drinks', petFood:'Pet Food', freshFood:'Fresh Food', frozenFood:'Frozen Food',
+    sectionContact:'Contact Information',
+    companyName:'Company Name', contactPerson:'Contact Person', email:'Email', phone:'Phone',
+    sectionRemarks:'Additional Notes', remarksPh:'Any special requirements…',
+    submitBtn:'Submit Inquiry', submitting:'Submitting…',
+    successTitle:'Inquiry Submitted!', successMsg:'We will provide a quotation within 24 hours',
+    queryCodeLabel:'Your Query Code', copyCode:'Copy Code', copied:'Copied!',
+    saveCodeTip:'Please save this code to check your quotation status',
+    closeModal:'Got it',
+    queryTitle:'Check Quotation', querySubtitle:'Enter your query code to view quotation status',
+    queryCodePh:'Enter 8-digit code', queryBtn:'Search', querying:'Searching…',
+    statusPending:'Processing', statusQuoted:'Quoted',
+    pendingMsg:'Quotation not yet available. Please check back later.',
+    pendingDetail:'We are preparing your quotation, expected within 24 hours.',
+    notFound:'No inquiry found for this query code',
+    notFoundDetail:'Please check if your query code is correct',
+    quoteTitle:'Quotation Details', totalPrice:'Total Price',
+    transitTime:'Transit Time', transitDays:'days',
+    validUntil:'Valid Until', breakdown:'Cost Breakdown', quoteRemarks:'Remarks',
+    inquirySummary:'Inquiry Details', route:'Route',
+    required:'This field is required', invalidEmail:'Please enter a valid email',
+    modeLabels:{SEA:'Sea Freight',AIR:'Air Freight',RAIL:'Railway',ROAD:'Road'},
+  }
+};
+
+let lang = localStorage.getItem('xj_lang') || 'en';
+let currentMode = 'FCL';
+let savedCode = '';
+
+function t(key){ return T[lang][key] || key; }
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(T[lang][key] !== undefined){
+      const req = el.querySelector('.req');
+      el.textContent = T[lang][key];
+      if(req) el.appendChild(req);
+    }
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if(T[lang][key] !== undefined) el.placeholder = T[lang][key];
+  });
+  document.getElementById('langLabel').textContent = lang === 'zh' ? 'EN' : '中文';
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  if(typeof dpRefreshDisplay === 'function') dpRefreshDisplay();
+}
+
+function toggleLang(){
+  lang = lang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('xj_lang', lang);
+  applyLang();
+}
+
+// ======================= View Switch =======================
+function switchView(tab){
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(tab.dataset.view).classList.add('active');
+}
+
+// ======================= Transport Mode =======================
+function selectMode(card){
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  currentMode = card.dataset.mode;
+  const cf = document.getElementById('containerFields');
+  if(currentMode === 'FCL') cf.classList.add('show');
+  else cf.classList.remove('show');
+}
+
+// ======================= Cargo Category Chips =======================
+function toggleChip(chip){ chip.classList.toggle('selected'); }
+
+// ======================= Custom Date Picker =======================
+const dpTrigger = document.getElementById('dpTrigger');
+const dpDropdown = document.getElementById('dpDropdown');
+const dpDisplay = document.getElementById('dpDisplay');
+const dpHidden = document.getElementById('cargoReadyDate');
+let dpYear, dpMonth, dpSelectedDate = null;
+
+(function initDP(){
+  const now = new Date();
+  dpYear = now.getFullYear();
+  dpMonth = now.getMonth();
+})();
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+function renderDP(){
+  const months = t('dpMonths');
+  const weekdays = t('dpWeekdays');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(dpYear, dpMonth, 1).getDay();
+  const daysInMonth = new Date(dpYear, dpMonth+1, 0).getDate();
+  const prevDays = new Date(dpYear, dpMonth, 0).getDate();
+
+  let html = `<div class="dp-nav">
+    <button type="button" class="dp-nav-btn" onclick="dpPrev()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <span class="dp-month-year">${months[dpMonth]} ${dpYear}</span>
+    <button type="button" class="dp-nav-btn" onclick="dpNext()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>`;
+
+  html += '<div class="dp-weekdays">';
+  weekdays.forEach(w => html += `<span>${w}</span>`);
+  html += '</div><div class="dp-days">';
+
+  for(let i = firstDay - 1; i >= 0; i--){
+    html += `<div class="dp-day other">${prevDays - i}</div>`;
+  }
+
+  for(let d = 1; d <= daysInMonth; d++){
+    const dateObj = new Date(dpYear, dpMonth, d);
+    const iso = `${dpYear}-${pad(dpMonth+1)}-${pad(d)}`;
+    let cls = 'dp-day';
+    if(dateObj.getTime() === today.getTime()) cls += ' today';
+    if(dpSelectedDate === iso) cls += ' selected';
+    html += `<div class="${cls}" onclick="dpSelect('${iso}')">${d}</div>`;
+  }
+
+  const totalCells = firstDay + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for(let i = 1; i <= remaining; i++){
+    html += `<div class="dp-day other">${i}</div>`;
+  }
+
+  html += `</div><button type="button" class="dp-today-btn" onclick="dpGoToday()">${t('dpToday')}</button>`;
+  dpDropdown.innerHTML = html;
+}
+
+function dpToggle(){
+  const open = dpDropdown.style.display === 'none';
+  dpDropdown.style.display = open ? 'block' : 'none';
+  dpTrigger.classList.toggle('open', open);
+  if(open) renderDP();
+}
+function dpClose(){ dpDropdown.style.display = 'none'; dpTrigger.classList.remove('open'); }
+
+function dpPrev(){ dpMonth--; if(dpMonth < 0){ dpMonth = 11; dpYear--; } renderDP(); }
+function dpNext(){ dpMonth++; if(dpMonth > 11){ dpMonth = 0; dpYear++; } renderDP(); }
+
+function dpSelect(iso){
+  dpSelectedDate = iso;
+  dpHidden.value = iso;
+  const parts = iso.split('-');
+  const months = t('dpMonths');
+  const m = parseInt(parts[1], 10) - 1;
+  if(lang === 'zh'){
+    dpDisplay.textContent = `${parts[0]}年${parseInt(parts[1],10)}月${parseInt(parts[2],10)}日`;
+  } else {
+    dpDisplay.textContent = `${months[m]} ${parseInt(parts[2],10)}, ${parts[0]}`;
+  }
+  dpDisplay.className = 'dp-text';
+  document.getElementById('dpField').classList.remove('has-error');
+  dpClose();
+}
+
+function dpGoToday(){
+  const now = new Date();
+  dpYear = now.getFullYear();
+  dpMonth = now.getMonth();
+  dpSelect(`${dpYear}-${pad(dpMonth+1)}-${pad(now.getDate())}`);
+}
+
+function dpRefreshDisplay(){
+  if(!dpSelectedDate){ dpDisplay.textContent = t('dpPlaceholder'); dpDisplay.className = 'dp-placeholder'; return; }
+  dpSelect(dpSelectedDate);
+}
+
+dpTrigger.addEventListener('click', dpToggle);
+dpTrigger.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); dpToggle(); }});
+document.addEventListener('click', function(e){
+  if(!dpTrigger.contains(e.target) && !dpDropdown.contains(e.target)) dpClose();
+});
+
+// ======================= Form Validation =======================
+function validateForm(){
+  let valid = true;
+  const fields = [
+    {id:'origin'}, {id:'destination'}, {id:'cargoReadyDate'},
+    {id:'commodity'}, {id:'grossWeight'}, {id:'volume'}, {id:'pieces'},
+    {id:'companyName'}, {id:'contactPerson'},
+    {id:'email', type:'email'}, {id:'phone'}
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const wrap = el.closest('.field');
+    if(!wrap) return;
+    const val = el.value.trim();
+    let err = false;
+    if(!val){ err = true; }
+    else if(f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){ err = true; }
+    wrap.classList.toggle('has-error', err);
+    if(err) valid = false;
+  });
+  return valid;
+}
+
+// ======================= Submit Inquiry =======================
+document.getElementById('inquiryForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  if(!validateForm()) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>${t('submitting')}`;
+
+  const cargoCategory = [];
+  document.querySelectorAll('.chip.selected').forEach(c => cargoCategory.push(c.dataset.special));
+
+  const body = {
+    shipmentMode: currentMode,
+    tradeTerms: document.getElementById('tradeTerms').value,
+    origin: document.getElementById('origin').value.trim(),
+    destination: document.getElementById('destination').value.trim(),
+    cargoReadyDate: document.getElementById('cargoReadyDate').value,
+    commodity: document.getElementById('commodity').value.trim(),
+    grossWeight: document.getElementById('grossWeight').value,
+    volume: document.getElementById('volume').value,
+    pieces: document.getElementById('pieces').value,
+    containerType: currentMode === 'FCL' ? document.getElementById('containerType').value : '',
+    containerQty: currentMode === 'FCL' ? document.getElementById('containerQty').value : '',
+    cargoCategory,
+    companyName: document.getElementById('companyName').value.trim(),
+    contactPerson: document.getElementById('contactPerson').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    remarks: document.getElementById('remarks').value.trim(),
+    lang
+  };
+
+  try {
+    const res = await fetch('/api/inquiry', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+    });
+    const data = await res.json();
+    if(data.success){
+      savedCode = data.queryCode;
+      document.getElementById('modalCode').textContent = savedCode;
+      document.getElementById('successModal').classList.add('show');
+      document.getElementById('inquiryForm').reset();
+      selectMode(document.querySelector('.mode-card[data-mode="SEA"]'));
+      document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.field.has-error').forEach(f => f.classList.remove('has-error'));
+      dpSelectedDate = null; dpHidden.value = ''; dpRefreshDisplay();
+    }
+  } catch(err){
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span data-i18n="submitBtn">${t('submitBtn')}</span>`;
+  }
+});
+
+// ======================= Copy Code =======================
+function copyCode(){
+  navigator.clipboard.writeText(savedCode).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.classList.add('copied');
+    btn.querySelector('span').textContent = t('copied');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.querySelector('span').textContent = t('copyCode');
+    }, 1500);
+  });
+}
+
+function closeModal(){
+  document.getElementById('successModal').classList.remove('show');
+}
+
+// ======================= Query =======================
+async function doQuery(){
+  const code = document.getElementById('queryCodeInput').value.trim();
+  if(!/^\d{8}$/.test(code)) return;
+
+  const btn = document.getElementById('queryBtn');
+  const wrap = document.getElementById('queryResult');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = t('querying');
+
+  try {
+    const res = await fetch(`/api/query/${code}`);
+    const data = await res.json();
+
+    if(!data.success){
+      wrap.innerHTML = renderNotFound();
+    } else if(data.status === 'pending'){
+      wrap.innerHTML = renderPending(data.inquiry);
+    } else {
+      wrap.innerHTML = renderQuoted(data.inquiry, data.quote);
+    }
+    setTimeout(function(){ lucide.createIcons(); }, 0);
+  } catch(err){
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.querySelector('span').textContent = t('queryBtn');
+  }
+}
+
+function renderNotFound(){
+  return `<div class="result-card">
+    <div class="result-status not-found"><i data-lucide="x-circle"></i>${t('notFound')}</div>
+    <div class="result-detail">${t('notFoundDetail')}</div>
+  </div>`;
+}
+
+function renderPending(inq){
+  return `<div class="result-card">
+    <div class="result-status pending"><i data-lucide="clock"></i>${t('statusPending')}</div>
+    <div class="result-msg">${t('pendingMsg')}</div>
+    <div class="result-detail">${t('pendingDetail')}</div>
+    ${inq ? `<div class="result-divider"></div>
+    <div class="result-row"><span class="rlabel">${t('route')}</span><span class="rvalue">${inq.origin} → ${inq.destination}</span></div>
+    <div class="result-row"><span class="rlabel">${t('sectionTransport')}</span><span class="rvalue">${t('modeLabels')[inq.shipmentMode] || inq.shipmentMode}</span></div>` : ''}
+  </div>`;
+}
+
+function renderQuoted(inq, quote){
+  return `<div class="result-card">
+    <div class="result-status quoted"><i data-lucide="check-circle"></i>${t('statusQuoted')}</div>
+    <div class="quote-price">
+      <span class="cur">${quote.currency}</span><span class="amount">${Number(quote.totalPrice).toLocaleString()}</span>
+    </div>
+    <div class="result-row"><span class="rlabel">${t('transitTime')}</span><span class="rvalue">${quote.transitTime} ${t('transitDays')}</span></div>
+    <div class="result-row"><span class="rlabel">${t('validUntil')}</span><span class="rvalue">${quote.validUntil}</span></div>
+    ${quote.breakdown ? `<div class="result-divider"></div><div style="margin-bottom:4px"><span class="rlabel">${t('breakdown')}</span></div><div class="result-detail" style="white-space:pre-wrap">${quote.breakdown}</div>` : ''}
+    ${quote.remarks ? `<div class="result-divider"></div><div style="margin-bottom:4px"><span class="rlabel">${t('quoteRemarks')}</span></div><div class="result-detail">${quote.remarks}</div>` : ''}
+    <div class="result-divider"></div>
+    <div style="margin-bottom:8px;font-size:13px;font-weight:600;color:var(--text)">${t('inquirySummary')}</div>
+    <div class="result-row"><span class="rlabel">${t('route')}</span><span class="rvalue">${inq.origin} → ${inq.destination}</span></div>
+    <div class="result-row"><span class="rlabel">${t('sectionTransport')}</span><span class="rvalue">${t('modeLabels')[inq.shipmentMode] || inq.shipmentMode}</span></div>
+    <div class="result-row"><span class="rlabel">${t('incoterms')}</span><span class="rvalue">${inq.tradeTerms}</span></div>
+    <div class="result-row"><span class="rlabel">${t('commodity')}</span><span class="rvalue">${inq.commodity}</span></div>
+    <div class="result-row"><span class="rlabel">${t('grossWeight')}</span><span class="rvalue">${inq.grossWeight} KG</span></div>
+    <div class="result-row"><span class="rlabel">${t('volume')}</span><span class="rvalue">${inq.volume} CBM</span></div>
+  </div>`;
+}
+
+// ======================= Init =======================
+applyLang();
+lucide.createIcons();
+
+// Icons in query results are rendered via setTimeout in doQuery()
+</script>
+</body>
+</html>

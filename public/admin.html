@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEAWIN Admin - 报价后台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pri:#2563EB;--pri-l:#3B82F6;--pri-d:#1D4ED8;
+  --success:#10B981;--warn:#F59E0B;--err:#EF4444;
+  --bg:#F4F6FB;--card:#fff;--text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --border:#E2E8F0;--border-l:#F1F5F9;
+}
+html{font-size:15px}
+body{font-family:'Work Sans','Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
+
+/* Header */
+.admin-header{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:40;
+}
+.admin-header .brand{display:flex;align-items:center;gap:10px}
+.admin-header .logo{
+  height:32px;width:auto;
+}
+.admin-header .title{font-size:17px;font-weight:600}
+.admin-header .subtitle{font-size:12px;color:var(--text3);font-weight:400;margin-left:8px}
+.refresh-btn{
+  display:flex;align-items:center;gap:6px;padding:8px 18px;
+  border:1.5px solid var(--border);border-radius:8px;background:var(--card);
+  color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;
+}
+.refresh-btn:hover{border-color:var(--pri);color:var(--pri);background:rgba(37,99,235,.04)}
+.refresh-btn svg{width:16px;height:16px}
+
+/* Content */
+.content{max-width:1200px;margin:0 auto;padding:24px 32px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--card);border-radius:12px;padding:20px;
+  border:1px solid var(--border-l);
+}
+.stat-card .stat-label{font-size:12.5px;color:var(--text3);margin-bottom:6px}
+.stat-card .stat-value{font-size:28px;font-weight:700;font-family:'Outfit',sans-serif}
+.stat-card.total .stat-value{color:var(--pri)}
+.stat-card.pending .stat-value{color:var(--warn)}
+.stat-card.quoted .stat-value{color:var(--success)}
+
+/* Filter tabs */
+.filter-bar{display:flex;gap:8px;margin-bottom:20px}
+.filter-tab{
+  padding:7px 18px;border-radius:20px;font-size:13px;font-weight:500;
+  border:1.5px solid var(--border);background:var(--card);color:var(--text2);
+  cursor:pointer;transition:all .2s;
+}
+.filter-tab:hover{border-color:var(--pri-l);color:var(--pri)}
+.filter-tab.active{background:var(--pri);border-color:var(--pri);color:#fff}
+
+/* Table */
+.table-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border-l);overflow:hidden}
+.table{width:100%;border-collapse:collapse}
+.table th{
+  text-align:left;padding:14px 16px;font-size:12px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.5px;
+  background:var(--border-l);border-bottom:1px solid var(--border);
+}
+.table td{padding:14px 16px;font-size:13.5px;border-bottom:1px solid var(--border-l);vertical-align:top}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:rgba(37,99,235,.015)}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:12px;font-size:11.5px;font-weight:600;
+}
+.badge.pending{background:rgba(245,158,11,.1);color:var(--warn)}
+.badge.quoted{background:rgba(16,185,129,.1);color:var(--success)}
+.badge svg{width:12px;height:12px}
+.code-cell{font-family:'Outfit',monospace;font-weight:600;letter-spacing:1px;color:var(--pri)}
+.route-cell{font-weight:500}
+.route-cell .arrow{color:var(--text3);margin:0 4px}
+.date-cell{font-size:12.5px;color:var(--text3)}
+.action-btn{
+  padding:6px 16px;border-radius:6px;font-size:12.5px;font-weight:600;
+  border:none;cursor:pointer;transition:all .15s;
+}
+.action-btn.quote{background:var(--pri);color:#fff}
+.action-btn.quote:hover{background:var(--pri-d)}
+.action-btn.view{background:var(--border-l);color:var(--text2)}
+.action-btn.view:hover{background:var(--border)}
+.action-btn.delete{background:none;color:var(--text3);padding:6px 8px}
+.action-btn.delete:hover{color:var(--err)}
+.action-btn svg{width:14px;height:14px;vertical-align:middle}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:14px}
+
+/* Detail row */
+.detail-row td{padding:0!important;border-bottom:1px solid var(--border-l)}
+.detail-content{
+  padding:16px 20px;background:var(--border-l);
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;
+}
+.detail-item{font-size:12.5px}
+.detail-item .dl{color:var(--text3);margin-bottom:2px}
+.detail-item .dv{font-weight:500;color:var(--text)}
+
+/* Modal */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(15,23,42,.4);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--card);border-radius:16px;width:100%;max-width:520px;
+  box-shadow:0 20px 60px rgba(0,0,0,.15);animation:mIn .3s ease;
+}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal-header{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-header h3{font-size:16px}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;border:none;
+  background:var(--border-l);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;color:var(--text3);transition:all .15s;
+}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-close svg{width:18px;height:18px}
+.modal-body{padding:20px 24px}
+.modal-body .mfield{margin-bottom:14px}
+.modal-body .mfield label{display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.modal-body .mfield input,.modal-body .mfield select,.modal-body .mfield textarea{
+  width:100%;padding:9px 12px;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  background:var(--card);color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;font-family:inherit;
+}
+.modal-body .mfield input:focus,.modal-body .mfield select:focus,.modal-body .mfield textarea:focus{
+  border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.08);
+}
+.modal-body .mfield textarea{resize:vertical;min-height:60px}
+.modal-body .mfield select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394A3B8' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.mfield-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.modal-footer .btn{
+  padding:9px 22px;border-radius:8px;font-size:13.5px;font-weight:600;
+  border:none;cursor:pointer;transition:all .15s;
+}
+.modal-footer .btn-cancel{background:var(--border-l);color:var(--text2)}
+.modal-footer .btn-cancel:hover{background:var(--border)}
+.modal-footer .btn-submit{background:var(--pri);color:#fff}
+.modal-footer .btn-submit:hover{background:var(--pri-d)}
+.modal-footer .btn-submit:disabled{opacity:.5;cursor:not-allowed}
+
+.inquiry-summary{
+  background:var(--border-l);border-radius:8px;padding:14px;margin-bottom:18px;
+  display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;
+}
+.inquiry-summary .is-item{font-size:12px}
+.inquiry-summary .is-label{color:var(--text3)}
+.inquiry-summary .is-val{font-weight:500;color:var(--text)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="admin-header">
+  <div class="brand">
+    <img class="logo" src="/logo.png" alt="SEAWIN">
+    <span class="title">SEAWIN Admin</span>
+    <span class="subtitle">报价管理后台</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a href="/" style="font-size:11px;color:#ccc;text-decoration:none;padding:4px 8px;border-radius:4px;transition:color .2s;" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#ccc'">Front</a>
+    <button class="refresh-btn" onclick="loadData()">
+      <i data-lucide="refresh-cw"></i> 刷新数据
+    </button>
+  </div>
+</header>
+
+<div class="content">
+  <div class="stats">
+    <div class="stat-card total">
+      <div class="stat-label">总询价数 Total</div>
+      <div class="stat-value" id="statTotal">0</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-label">待报价 Pending</div>
+      <div class="stat-value" id="statPending">0</div>
+    </div>
+    <div class="stat-card quoted">
+      <div class="stat-label">已报价 Quoted</div>
+      <div class="stat-value" id="statQuoted">0</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-tab active" data-filter="all" onclick="setFilter(this)">全部 All</div>
+    <div class="filter-tab" data-filter="pending" onclick="setFilter(this)">待报价 Pending</div>
+    <div class="filter-tab" data-filter="quoted" onclick="setFilter(this)">已报价 Quoted</div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>查询码 Code</th>
+          <th>路线 Route</th>
+          <th>运输方式 Mode</th>
+          <th>贸易条款</th>
+          <th>公司 Company</th>
+          <th>状态 Status</th>
+          <th>提交时间</th>
+          <th>操作 Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div id="emptyState" class="empty-state hidden">
+      <i data-lucide="inbox"></i>
+      <p>暂无询价数据</p>
+    </div>
+  </div>
+</div>
+
+<!-- Quote Modal -->
+<div class="modal-bg" id="quoteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>提交报价 Submit Quotation</h3>
+      <button class="modal-close" onclick="closeQuoteModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="inquiry-summary" id="modalSummary"></div>
+      <div class="mfield-row">
+        <div class="mfield">
+          <label>币种 Currency *</label>
+          <select id="qCurrency">
+            <option value="USD">USD - 美元</option>
+            <option value="CNY">CNY - 人民币</option>
+            <option value="EUR">EUR - 欧元</option>
+            <option value="GBP">GBP - 英镑</option>
+            <option value="JPY">JPY - 日元</option>
+          </select>
+        </div>
+        <div class="mfield">
+          <label>报价金额 Total Price *</label>
+          <input type="number" id="qPrice" min="0" step="0.01" required>
+        </div>
+      </div>
+      <div class="mfield-row">
+        <div class="mfield">
+          <label>运输时效 Transit Time (天/days) *</label>
+          <input type="number" id="qTransit" min="1" required>
+        </div>
+        <div class="mfield">
+          <label>有效期至 Valid Until *</label>
+          <input type="date" id="qValidUntil" required>
+        </div>
+      </div>
+      <div class="mfield">
+        <label>费用明细 Cost Breakdown</label>
+        <textarea id="qBreakdown" rows="3" placeholder="Ocean Freight: $XXX&#10;Origin Charges: $XXX&#10;Destination Charges: $XXX"></textarea>
+      </div>
+      <div class="mfield">
+        <label>备注 Remarks</label>
+        <textarea id="qRemarks" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeQuoteModal()">取消 Cancel</button>
+      <button class="btn btn-submit" id="submitQuoteBtn" onclick="submitQuote()">提交报价 Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>询价详情 Inquiry Detail</h3>
+      <button class="modal-close" onclick="closeDetailModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" id="detailContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeDetailModal()">关闭 Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allData = [];
+let currentFilter = 'all';
+let currentQuoteCode = '';
+
+const MODE_MAP = {SEA:'海运 Sea',AIR:'空运 Air',RAIL:'铁路 Rail',ROAD:'公路 Road'};
+const CARGO_CAT_MAP = {PRE_PACKED:'预包装食品',NON_ALCOHOL:'无酒精饮料',ALCOHOL:'含酒精饮料',PET_FOOD:'宠物食品',FRESH:'生鲜食品',FROZEN:'冷冻食品'};
+
+async function loadData(){
+  try{
+    const res = await fetch('/api/admin/inquiries');
+    allData = await res.json();
+    updateStats();
+    renderTable();
+  }catch(e){ console.error(e); }
+}
+
+function updateStats(){
+  const total = allData.length;
+  const pending = allData.filter(i=>i.status==='pending').length;
+  const quoted = allData.filter(i=>i.status==='quoted').length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statQuoted').textContent = quoted;
+}
+
+function setFilter(tab){
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  currentFilter = tab.dataset.filter;
+  renderTable();
+}
+
+function renderTable(){
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  let filtered = allData;
+  if(currentFilter !== 'all') filtered = allData.filter(i=>i.status===currentFilter);
+
+  if(!filtered.length){
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = filtered.map(i => `
+    <tr>
+      <td class="code-cell">${i.queryCode}</td>
+      <td class="route-cell">${i.origin}<span class="arrow">→</span>${i.destination}</td>
+      <td>${MODE_MAP[i.shipmentMode]||i.shipmentMode}</td>
+      <td>${i.tradeTerms}</td>
+      <td>${i.companyName}<br><span style="font-size:12px;color:var(--text3)">${i.contactPerson}</span></td>
+      <td><span class="badge ${i.status}"><i data-lucide="${i.status==='quoted'?'check-circle':'clock'}"></i>${i.status==='quoted'?'已报价 Quoted':'待报价 Pending'}</span></td>
+      <td class="date-cell">${new Date(i.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
+      <td>
+        ${i.status==='pending'
+          ? `<button class="action-btn quote" onclick="openQuoteModal('${i.queryCode}')">报价 Quote</button>`
+          : `<button class="action-btn view" onclick="openDetailModal('${i.queryCode}')">查看 View</button>`}
+        <button class="action-btn delete" title="删除" onclick="deleteInquiry('${i.queryCode}')"><i data-lucide="trash-2"></i></button>
+      </td>
+    </tr>
+  `).join('');
+  lucide.createIcons();
+}
+
+function openQuoteModal(code){
+  currentQuoteCode = code;
+  const inq = allData.find(i=>i.queryCode===code);
+  if(!inq) return;
+  document.getElementById('modalSummary').innerHTML = `
+    <div class="is-item"><span class="is-label">路线 Route</span><br><span class="is-val">${inq.origin} → ${inq.destination}</span></div>
+    <div class="is-item"><span class="is-label">运输方式 Mode</span><br><span class="is-val">${MODE_MAP[inq.shipmentMode]||inq.shipmentMode}</span></div>
+    <div class="is-item"><span class="is-label">贸易条款 Incoterms</span><br><span class="is-val">${inq.tradeTerms}</span></div>
+    <div class="is-item"><span class="is-label">品名 Commodity</span><br><span class="is-val">${inq.commodity}</span></div>
+    <div class="is-item"><span class="is-label">毛重 Weight</span><br><span class="is-val">${inq.grossWeight} KG</span></div>
+    <div class="is-item"><span class="is-label">体积 Volume</span><br><span class="is-val">${inq.volume} CBM</span></div>
+    <div class="is-item"><span class="is-label">件数 Pieces</span><br><span class="is-val">${inq.pieces}</span></div>
+    ${inq.containerType ? `<div class="is-item"><span class="is-label">柜型 Container</span><br><span class="is-val">${inq.containerType} × ${inq.containerQty}</span></div>` : ''}
+    <div class="is-item"><span class="is-label">货好日期 Ready</span><br><span class="is-val">${inq.cargoReadyDate}</span></div>
+    ${(inq.cargoCategory||inq.specialCargo||[]).length ? `<div class="is-item" style="grid-column:1/-1"><span class="is-label">货物类别 Cargo Category</span><br><span class="is-val">${(inq.cargoCategory||inq.specialCargo).map(c=>CARGO_CAT_MAP[c]||c).join('、')}</span></div>` : ''}
+    ${inq.remarks ? `<div class="is-item" style="grid-column:1/-1"><span class="is-label">备注 Remarks</span><br><span class="is-val">${inq.remarks}</span></div>` : ''}
+  `;
+  document.getElementById('qPrice').value = '';
+  document.getElementById('qTransit').value = '';
+  document.getElementById('qValidUntil').value = '';
+  document.getElementById('qBreakdown').value = '';
+  document.getElementById('qRemarks').value = '';
+  document.getElementById('quoteModal').classList.add('show');
+}
+function closeQuoteModal(){ document.getElementById('quoteModal').classList.remove('show'); }
+
+async function submitQuote(){
+  const price = document.getElementById('qPrice').value;
+  const transit = document.getElementById('qTransit').value;
+  const validUntil = document.getElementById('qValidUntil').value;
+  if(!price || !transit || !validUntil){ alert('请填写必填项 / Please fill required fields'); return; }
+
+  const btn = document.getElementById('submitQuoteBtn');
+  btn.disabled = true;
+  btn.textContent = '提交中...';
+
+  try{
+    const res = await fetch(`/api/admin/quote/${currentQuoteCode}`,{
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        currency: document.getElementById('qCurrency').value,
+        totalPrice: price,
+        transitTime: transit,
+        validUntil,
+        breakdown: document.getElementById('qBreakdown').value.trim(),
+        remarks: document.getElementById('qRemarks').value.trim()
+      })
+    });
+    const data = await res.json();
+    if(data.success){
+      closeQuoteModal();
+      loadData();
+    }
+  }catch(e){ console.error(e); }
+  finally{ btn.disabled = false; btn.textContent = '提交报价 Submit'; }
+}
+
+function openDetailModal(code){
+  const inq = allData.find(i=>i.queryCode===code);
+  if(!inq) return;
+  const q = inq.quote || {};
+  document.getElementById('detailContent').innerHTML = `
+    <div class="inquiry-summary">
+      <div class="is-item"><span class="is-label">路线</span><br><span class="is-val">${inq.origin} → ${inq.destination}</span></div>
+      <div class="is-item"><span class="is-label">运输方式</span><br><span class="is-val">${MODE_MAP[inq.shipmentMode]||inq.shipmentMode}</span></div>
+      <div class="is-item"><span class="is-label">贸易条款</span><br><span class="is-val">${inq.tradeTerms}</span></div>
+      <div class="is-item"><span class="is-label">品名</span><br><span class="is-val">${inq.commodity}</span></div>
+      <div class="is-item"><span class="is-label">毛重</span><br><span class="is-val">${inq.grossWeight} KG</span></div>
+      <div class="is-item"><span class="is-label">体积</span><br><span class="is-val">${inq.volume} CBM</span></div>
+      ${(inq.cargoCategory||inq.specialCargo||[]).length ? `<div class="is-item" style="grid-column:1/-1"><span class="is-label">货物类别</span><br><span class="is-val">${(inq.cargoCategory||inq.specialCargo).map(c=>CARGO_CAT_MAP[c]||c).join('、')}</span></div>` : ''}
+    </div>
+    <h3 style="font-size:15px;margin-bottom:12px;">报价信息 Quotation</h3>
+    <div style="background:rgba(16,185,129,.06);border-radius:10px;padding:16px;border:1px solid rgba(16,185,129,.15);text-align:center;margin-bottom:14px;">
+      <div style="font-size:13px;color:var(--success);margin-bottom:4px;">${q.currency}</div>
+      <div style="font-size:28px;font-weight:700;color:var(--success);font-family:'Outfit',sans-serif;">${Number(q.totalPrice).toLocaleString()}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+      <div><span style="color:var(--text3)">运输时效</span><br><strong>${q.transitTime} 天/days</strong></div>
+      <div><span style="color:var(--text3)">有效期至</span><br><strong>${q.validUntil}</strong></div>
+    </div>
+    ${q.breakdown ? `<div style="margin-top:14px;font-size:13px;"><span style="color:var(--text3)">费用明细</span><pre style="margin-top:4px;white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:var(--text);background:var(--border-l);padding:10px;border-radius:6px;">${q.breakdown}</pre></div>` : ''}
+    ${q.remarks ? `<div style="margin-top:10px;font-size:13px;"><span style="color:var(--text3)">备注</span><br><span style="color:var(--text)">${q.remarks}</span></div>` : ''}
+    <div style="margin-top:10px;font-size:12px;color:var(--text3)">报价时间：${inq.quotedAt ? new Date(inq.quotedAt).toLocaleString('zh-CN') : '-'}</div>
+  `;
+  document.getElementById('detailModal').classList.add('show');
+}
+function closeDetailModal(){ document.getElementById('detailModal').classList.remove('show'); }
+
+async function deleteInquiry(code){
+  if(!confirm('确定删除此询价？此操作不可恢复。\nDelete this inquiry? This cannot be undone.')) return;
+  try{
+    await fetch(`/api/admin/inquiry/${code}`,{method:'DELETE'});
+    loadData();
+  }catch(e){ console.error(e); }
+}
+
+loadData();
+lucide.createIcons();
+</script>
+</body>
+</html>
