@@ -49,79 +49,154 @@ function buildTransporter() {
   });
 }
 
+const EMAIL_T = {
+  brandSub:   {en:'',zh:'海盟',th:'ซีวิน',vi:'SEAWIN'},
+  inqTitle:   {en:'Inquiry Submitted Successfully',zh:'询价提交成功',th:'ส่งคำขอสำเร็จ',vi:'Gửi yêu cầu thành công'},
+  inqBody:    {en:'Thank you for your inquiry. We have received your request and will provide a quotation within <strong>24 hours</strong>.',zh:'感谢您的询价！我们已收到您的请求，将在 <strong>24小时内</strong> 为您提供报价。',th:'ขอบคุณสำหรับคำขอของคุณ เราได้รับคำขอแล้วและจะเสนอราคาภายใน <strong>24 ชั่วโมง</strong>',vi:'Cảm ơn yêu cầu của bạn. Chúng tôi đã nhận được và sẽ báo giá trong vòng <strong>24 giờ</strong>.'},
+  queryCode:  {en:'Your Query Code',zh:'您的查询码',th:'รหัสสอบถามของคุณ',vi:'Mã tra cứu của bạn'},
+  keepCode:   {en:'Please keep this code safe. You can use it to check the status of your quotation at any time.',zh:'请妥善保管此查询码，您可以通过此码随时查询报价状态。',th:'กรุณาเก็บรหัสนี้ไว้ คุณสามารถใช้ตรวจสอบสถานะใบเสนอราคาได้ตลอดเวลา',vi:'Vui lòng lưu giữ mã này. Bạn có thể dùng để tra cứu trạng thái báo giá bất cứ lúc nào.'},
+  quoteTitle: {en:'Your Quotation is Ready',zh:'您的报价已就绪',th:'ใบเสนอราคาของคุณพร้อมแล้ว',vi:'Báo giá của bạn đã sẵn sàng'},
+  quoteBody:  {en:'Great news! We have completed the quotation for your inquiry. Please find the details below.',zh:'好消息！我们已为您的询价完成报价，以下是报价详情。',th:'ข่าวดี! เราได้จัดทำใบเสนอราคาเสร็จเรียบร้อยแล้ว รายละเอียดดังนี้',vi:'Tin vui! Chúng tôi đã hoàn thành báo giá cho yêu cầu của bạn. Chi tiết như sau.'},
+  qRoute:     {en:'Route',zh:'路线',th:'เส้นทาง',vi:'Tuyến đường'},
+  qMode:      {en:'Shipment Mode',zh:'运输方式',th:'รูปแบบขนส่ง',vi:'Phương thức vận chuyển'},
+  qCommodity: {en:'Commodity',zh:'品名',th:'สินค้า',vi:'Hàng hóa'},
+  qPrice:     {en:'Total Price',zh:'报价金额',th:'ราคารวม',vi:'Tổng giá'},
+  qTransit:   {en:'Transit Time',zh:'运输时效',th:'ระยะเวลาขนส่ง',vi:'Thời gian vận chuyển'},
+  qDays:      {en:'days',zh:'天',th:'วัน',vi:'ngày'},
+  qValid:     {en:'Valid Until',zh:'有效期至',th:'ใช้ได้ถึง',vi:'Hiệu lực đến'},
+  qBreakdown: {en:'Cost Breakdown',zh:'费用明细',th:'รายละเอียดค่าใช้จ่าย',vi:'Chi tiết chi phí'},
+  qRemarks:   {en:'Remarks',zh:'备注',th:'หมายเหตุ',vi:'Ghi chú'},
+  qContact:   {en:'If you have any questions, please feel free to contact us.',zh:'如有任何疑问，请随时与我们联系。',th:'หากมีข้อสงสัย กรุณาติดต่อเรา',vi:'Nếu có thắc mắc, vui lòng liên hệ chúng tôi.'},
+  moreTools:  {en:'More freight rates & tools, please visit:',zh:'更多运价与工具，请访问：',th:'ดูอัตราค่าขนส่งและเครื่องมือเพิ่มเติมได้ที่:',vi:'Xem thêm giá cước và công cụ tại:'},
+  regards:    {en:'Best regards,',zh:'此致敬礼，',th:'ด้วยความนับถือ,',vi:'Trân trọng,'},
+};
+function et(key, lang){ return EMAIL_T[key][lang] || EMAIL_T[key].en; }
+
 function inquiryEmailHtml(code, lang) {
-  const isEn = lang === 'en';
   return `
 <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
   <div style="text-align:center;margin-bottom:24px;">
-    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${isEn ? '' : '海盟'}</h1>
+    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${et('brandSub',lang)}</h1>
   </div>
   <div style="background:#f8fafc;border-radius:12px;padding:28px;border:1px solid #e2e8f0;">
-    <h2 style="color:#1e293b;margin:0 0 12px;">${isEn ? 'Inquiry Submitted Successfully' : '询价提交成功'}</h2>
-    <p style="color:#475569;line-height:1.7;margin:0 0 16px;">
-      ${isEn
-        ? 'Thank you for your inquiry. We have received your request and will provide a quotation within <strong>24 hours</strong>.'
-        : '感谢您的询价！我们已收到您的请求，将在 <strong>24小时内</strong> 为您提供报价。'}
-    </p>
+    <h2 style="color:#1e293b;margin:0 0 12px;">${et('inqTitle',lang)}</h2>
+    <p style="color:#475569;line-height:1.7;margin:0 0 16px;">${et('inqBody',lang)}</p>
     <div style="background:#2563EB;color:#fff;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">
-      <p style="margin:0 0 6px;font-size:13px;opacity:.85;">${isEn ? 'Your Query Code' : '您的查询码'}</p>
+      <p style="margin:0 0 6px;font-size:13px;opacity:.85;">${et('queryCode',lang)}</p>
       <p style="margin:0;font-size:30px;font-weight:700;letter-spacing:4px;">${code}</p>
     </div>
-    <p style="color:#475569;line-height:1.7;margin:0;">
-      ${isEn
-        ? 'Please keep this code safe. You can use it to check the status of your quotation at any time.'
-        : '请妥善保管此查询码，您可以通过此码随时查询报价状态。'}
-    </p>
+    <p style="color:#475569;line-height:1.7;margin:0;">${et('keepCode',lang)}</p>
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
-    <p style="color:#94a3b8;font-size:12px;margin:0;">${isEn ? 'Best regards,' : '此致敬礼，'}<br>${SENDER_NAME} Team</p>
+    <p style="color:#475569;font-size:12.5px;margin:0 0 12px;">${et('moreTools',lang)} <a href="https://pc.iloveseawin.com/" style="color:#2563EB;text-decoration:none;font-weight:500;">pc.iloveseawin.com</a></p>
+    <p style="color:#94a3b8;font-size:12px;margin:0;">${et('regards',lang)}<br>${SENDER_NAME} Team</p>
   </div>
 </div>`;
 }
 
-function quoteEmailHtml(code, lang) {
-  const isEn = lang === 'en';
+const MODE_NAMES = {
+  SEA:{en:'Sea Freight',zh:'海运',th:'ทางทะเล',vi:'Đường biển'},
+  AIR:{en:'Air Freight',zh:'空运',th:'ทางอากาศ',vi:'Đường hàng không'},
+  RAIL:{en:'Railway',zh:'铁路',th:'ทางรถไฟ',vi:'Đường sắt'},
+  ROAD:{en:'Road',zh:'公路',th:'ทางถนน',vi:'Đường bộ'},
+};
+
+function quoteEmailHtml(inquiry, lang) {
+  const q = inquiry.quote;
+  const modeName = (MODE_NAMES[inquiry.shipmentMode] || {})[lang] || inquiry.shipmentMode;
+  const rowStyle = 'padding:8px 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;';
+  const labelStyle = 'color:#64748b;font-size:13px;';
+  const valueStyle = 'color:#1e293b;font-size:13px;font-weight:500;text-align:right;';
+
+  let breakdownHtml = '';
+  if (q.breakdown) {
+    breakdownHtml = `
+    <div style="margin-top:16px;">
+      <p style="color:#64748b;font-size:13px;margin:0 0 6px;">${et('qBreakdown',lang)}</p>
+      <div style="background:#f8fafc;border-radius:8px;padding:12px 14px;border:1px solid #e2e8f0;">
+        <pre style="margin:0;white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:#334155;line-height:1.6;">${q.breakdown}</pre>
+      </div>
+    </div>`;
+  }
+
+  let remarksHtml = '';
+  if (q.remarks) {
+    remarksHtml = `
+    <div style="margin-top:12px;">
+      <p style="color:#64748b;font-size:13px;margin:0 0 4px;">${et('qRemarks',lang)}</p>
+      <p style="color:#334155;font-size:13px;margin:0;line-height:1.6;">${q.remarks}</p>
+    </div>`;
+  }
+
   return `
 <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
   <div style="text-align:center;margin-bottom:24px;">
-    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${isEn ? '' : '海盟'}</h1>
+    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${et('brandSub',lang)}</h1>
   </div>
   <div style="background:#f8fafc;border-radius:12px;padding:28px;border:1px solid #e2e8f0;">
-    <h2 style="color:#1e293b;margin:0 0 12px;">${isEn ? 'Quotation Ready' : '报价已就绪'}</h2>
-    <p style="color:#475569;line-height:1.7;margin:0 0 16px;">
-      ${isEn
-        ? 'Great news! Your quotation is now ready. Please use the query code below to view the details.'
-        : '好消息！您的报价已准备就绪，请使用以下查询码查看详细报价信息。'}
-    </p>
-    <div style="background:#10B981;color:#fff;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">
-      <p style="margin:0 0 6px;font-size:13px;opacity:.85;">${isEn ? 'Your Query Code' : '您的查询码'}</p>
-      <p style="margin:0;font-size:30px;font-weight:700;letter-spacing:4px;">${code}</p>
+    <h2 style="color:#1e293b;margin:0 0 12px;">${et('quoteTitle',lang)}</h2>
+    <p style="color:#475569;line-height:1.7;margin:0 0 20px;">${et('quoteBody',lang)}</p>
+
+    <div style="background:#10B981;color:#fff;border-radius:10px;padding:20px;text-align:center;margin:0 0 20px;">
+      <p style="margin:0 0 4px;font-size:13px;opacity:.85;">${et('qPrice',lang)}</p>
+      <p style="margin:0;font-size:32px;font-weight:700;letter-spacing:1px;">${q.currency} ${Number(q.totalPrice).toLocaleString()}</p>
     </div>
-    <p style="color:#475569;line-height:1.7;margin:0;">
-      ${isEn
-        ? 'Visit our website and enter this code to view your quotation details.'
-        : '请访问我们的网站并输入此码查看报价详情。'}
-    </p>
+
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:9px 0;color:#64748b;">${et('qRoute',lang)}</td>
+        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${inquiry.origin} → ${inquiry.destination}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:9px 0;color:#64748b;">${et('qMode',lang)}</td>
+        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${modeName}</td>
+      </tr>
+      ${inquiry.commodity ? `<tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:9px 0;color:#64748b;">${et('qCommodity',lang)}</td>
+        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${inquiry.commodity}</td>
+      </tr>` : ''}
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:9px 0;color:#64748b;">${et('qTransit',lang)}</td>
+        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${q.transitTime} ${et('qDays',lang)}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;color:#64748b;">${et('qValid',lang)}</td>
+        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${q.validUntil}</td>
+      </tr>
+    </table>
+    ${breakdownHtml}
+    ${remarksHtml}
+
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
-    <p style="color:#94a3b8;font-size:12px;margin:0;">${isEn ? 'Best regards,' : '此致敬礼，'}<br>${SENDER_NAME} Team</p>
+    <p style="color:#475569;font-size:12.5px;line-height:1.6;margin:0 0 12px;">${et('qContact',lang)}</p>
+    <p style="color:#475569;font-size:12.5px;margin:0 0 12px;">${et('moreTools',lang)} <a href="https://pc.iloveseawin.com/" style="color:#2563EB;text-decoration:none;font-weight:500;">pc.iloveseawin.com</a></p>
+    <p style="color:#94a3b8;font-size:12px;margin:0;">${et('regards',lang)}<br>${SENDER_NAME} Team</p>
   </div>
 </div>`;
 }
 
-async function sendEmail(to, type, code, lang) {
+async function sendEmail(to, type, codeOrInquiry, lang) {
   const transporter = buildTransporter();
   if (!transporter) {
-    console.log(`[Email Skip] SMTP not configured. Type=${type} To=${to} Code=${code}`);
+    console.log(`[Email Skip] SMTP not configured. Type=${type} To=${to}`);
     return;
   }
-  const subjectMap = {
-    inquiry: { zh: `询价提交成功 - 查询码: ${code}`, en: `Inquiry Submitted – Query Code: ${code}` },
-    quote:   { zh: `报价已就绪 - 查询码: ${code}`,   en: `Quotation Ready – Query Code: ${code}` }
-  };
-  const html = type === 'inquiry' ? inquiryEmailHtml(code, lang) : quoteEmailHtml(code, lang);
+  let subject, html;
+  if (type === 'inquiry') {
+    const code = codeOrInquiry;
+    const subj = { zh:`询价提交成功 - 查询码: ${code}`, en:`Inquiry Submitted – Query Code: ${code}`, th:`ส่งคำขอสำเร็จ – รหัส: ${code}`, vi:`Gửi yêu cầu thành công – Mã: ${code}` };
+    subject = subj[lang] || subj.en;
+    html = inquiryEmailHtml(code, lang);
+  } else {
+    const inquiry = codeOrInquiry;
+    const q = inquiry.quote;
+    const subj = { zh:`报价已就绪 – ${q.currency} ${Number(q.totalPrice).toLocaleString()} | ${inquiry.origin} → ${inquiry.destination}`, en:`Quotation Ready – ${q.currency} ${Number(q.totalPrice).toLocaleString()} | ${inquiry.origin} → ${inquiry.destination}`, th:`ใบเสนอราคาพร้อมแล้ว – ${q.currency} ${Number(q.totalPrice).toLocaleString()} | ${inquiry.origin} → ${inquiry.destination}`, vi:`Báo giá đã sẵn sàng – ${q.currency} ${Number(q.totalPrice).toLocaleString()} | ${inquiry.origin} → ${inquiry.destination}` };
+    subject = subj[lang] || subj.en;
+    html = quoteEmailHtml(inquiry, lang);
+  }
   try {
     await transporter.sendMail({
       from: `"${SENDER_NAME}" <${SENDER_EMAIL}>`,
-      to, subject: subjectMap[type][lang] || subjectMap[type].en, html
+      to, subject, html
     });
     console.log(`[Email OK] ${type} → ${to}`);
   } catch (err) {
@@ -163,7 +238,7 @@ app.post('/api/inquiry', async (req, res) => {
     };
     data.push(inquiry);
     writeData(data);
-    sendEmail(inquiry.email, 'inquiry', queryCode, inquiry.lang);
+    // sendEmail(inquiry.email, 'inquiry', queryCode, inquiry.lang); // TODO: 暂时禁用邮件
     res.json({ success: true, queryCode });
   } catch (err) {
     console.error(err);
@@ -228,7 +303,7 @@ app.put('/api/admin/quote/:code', async (req, res) => {
   };
   data[idx].quotedAt = new Date().toISOString();
   writeData(data);
-  sendEmail(data[idx].email, 'quote', data[idx].queryCode, data[idx].lang);
+  // sendEmail(data[idx].email, 'quote', data[idx], data[idx].lang); // TODO: 暂时禁用邮件
   res.json({ success: true });
 });
 

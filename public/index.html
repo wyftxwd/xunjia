@@ -42,21 +42,48 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
   height:30px;width:auto;
 }
 .header-brand .name{font-size:17px;font-weight:600;color:var(--text);font-family:'Outfit','Noto Sans SC',sans-serif}
-.lang-btn{
+/* ---------- Language Picker ---------- */
+.lang-picker{position:relative}
+.lang-picker-btn{
   display:flex;align-items:center;gap:5px;
-  background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.15);
-  border-radius:var(--r-pill);padding:6px 14px;
-  font-size:13px;font-weight:500;color:var(--pri);cursor:pointer;
-  transition:all .2s;
+  background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.12);
+  border-radius:var(--r-pill);padding:6px 12px;
+  font-size:12.5px;font-weight:500;color:var(--pri);cursor:pointer;
+  transition:all .2s;user-select:none;
 }
-.lang-btn:active{transform:scale(.96);background:rgba(37,99,235,.15)}
+.lang-picker-btn:hover{background:rgba(37,99,235,.12)}
+.lang-picker-btn:active{transform:scale(.97)}
+.lang-picker-btn svg{width:14px;height:14px;flex-shrink:0}
+.lang-picker-btn .lp-label{max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-picker-menu{
+  position:absolute;right:0;top:calc(100% + 6px);z-index:200;
+  min-width:140px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 8px 28px rgba(0,0,0,.12);
+  padding:5px;opacity:0;visibility:hidden;
+  transform:translateY(-6px) scale(.96);
+  transition:all .2s ease;
+}
+.lang-picker-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.lang-picker-item{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;border-radius:8px;cursor:pointer;
+  font-size:13px;color:var(--text);transition:all .15s;
+}
+.lang-picker-item:hover{background:rgba(37,99,235,.06)}
+.lang-picker-item.active{background:rgba(37,99,235,.1);color:var(--pri);font-weight:600}
+.lang-picker-item .lp-flag{font-size:16px;line-height:1}
+.lang-picker-item .lp-check{
+  margin-left:auto;width:14px;height:14px;color:var(--pri);
+  opacity:0;transition:opacity .15s;
+}
+.lang-picker-item.active .lp-check{opacity:1}
 .admin-link{
   font-size:11px;color:#ccc;text-decoration:none;
   padding:4px 8px;border-radius:4px;
   transition:color .2s;
 }
 .admin-link:hover{color:#aaa}
-.lang-btn svg{width:15px;height:15px}
 
 /* ---------- Main ---------- */
 .main{padding:72px 16px 90px;max-width:480px;margin:0 auto}
@@ -369,10 +396,30 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
   </div>
   <div style="display:flex;align-items:center;gap:6px;">
   <a href="/admin.html" class="admin-link">Admin</a>
-  <button class="lang-btn" onclick="toggleLang()">
-    <i data-lucide="globe"></i>
-    <span id="langLabel">EN</span>
-  </button>
+  <div class="lang-picker" id="langPicker">
+    <div class="lang-picker-btn" id="langPickerBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span class="lp-label" id="langPickerLabel">English</span>
+    </div>
+    <div class="lang-picker-menu" id="langPickerMenu">
+      <div class="lang-picker-item" data-lang="en" onclick="pickLang('en')">
+        <span class="lp-flag">🇬🇧</span><span>English</span>
+        <svg class="lp-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="lang-picker-item" data-lang="zh" onclick="pickLang('zh')">
+        <span class="lp-flag">🇨🇳</span><span>中文</span>
+        <svg class="lp-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="lang-picker-item" data-lang="th" onclick="pickLang('th')">
+        <span class="lp-flag">🇹🇭</span><span>ภาษาไทย</span>
+        <svg class="lp-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="lang-picker-item" data-lang="vi" onclick="pickLang('vi')">
+        <span class="lp-flag">🇻🇳</span><span>Tiếng Việt</span>
+        <svg class="lp-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+  </div>
   </div>
 </header>
 
@@ -423,8 +470,8 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
       </div>
       <div class="field-row">
         <div class="field">
-          <label data-i18n="incoterms"><span class="req">*</span></label>
-          <select id="tradeTerms" required>
+          <label data-i18n="incoterms"></label>
+          <select id="tradeTerms">
             <option value="FOB">FOB</option>
             <option value="CIF">CIF</option>
             <option value="CFR">CFR</option>
@@ -552,8 +599,8 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
         <div class="error-msg" data-i18n="invalidEmail"></div>
       </div>
       <div class="field">
-        <label data-i18n="phone"><span class="req">*</span></label>
-        <input type="tel" id="phone" required inputmode="tel">
+        <label data-i18n="phone"></label>
+        <input type="tel" id="phone" inputmode="tel">
         <div class="error-msg" data-i18n="required"></div>
       </div>
     </div>
@@ -698,6 +745,80 @@ const T = {
     inquirySummary:'Inquiry Details', route:'Route',
     required:'This field is required', invalidEmail:'Please enter a valid email',
     modeLabels:{SEA:'Sea Freight',AIR:'Air Freight',RAIL:'Railway',ROAD:'Road'},
+  },
+  th: {
+    brand:'SEAWIN สอบถามราคา', tabInquiry:'สอบถามราคา', tabQuery:'ตรวจสอบราคา',
+    sectionTransport:'รูปแบบการขนส่ง',
+    modeSea:'ทางทะเล', modeAir:'ทางอากาศ', modeRail:'ทางรถไฟ', modeRoad:'ทางถนน',
+    sectionRoute:'ข้อมูลเส้นทาง',
+    origin:'ต้นทาง', originPh:'เช่น เซี่ยงไฮ้ / CNSHA',
+    destination:'ปลายทาง', destinationPh:'เช่น ลอสแอนเจลิส / USLAX',
+    incoterms:'เงื่อนไขการค้า', cargoReadyDate:'วันที่สินค้าพร้อม', dpPlaceholder:'เลือกวันที่', dpToday:'วันนี้',
+    dpMonths:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
+    dpWeekdays:['อา','จ','อ','พ','พฤ','ศ','ส'],
+    sectionCargo:'รายละเอียดสินค้า',
+    commodity:'ชื่อสินค้า', commodityPh:'เช่น อิเล็กทรอนิกส์',
+    grossWeight:'น้ำหนักรวม (KG)', volume:'ปริมาตร (CBM)', pieces:'จำนวนชิ้น',
+    containerType:'ประเภทตู้', containerQty:'จำนวนตู้',
+    cargoCategory:'ประเภทสินค้า', prePackedFood:'อาหารบรรจุสำเร็จ', nonAlcoholDrink:'เครื่องดื่มไม่มีแอลกอฮอล์', alcoholDrink:'เครื่องดื่มแอลกอฮอล์', petFood:'อาหารสัตว์เลี้ยง', freshFood:'อาหารสด', frozenFood:'อาหารแช่แข็ง',
+    sectionContact:'ข้อมูลติดต่อ',
+    companyName:'ชื่อบริษัท', contactPerson:'ผู้ติดต่อ', email:'อีเมล', phone:'โทรศัพท์',
+    sectionRemarks:'หมายเหตุเพิ่มเติม', remarksPh:'หากมีข้อกำหนดพิเศษกรุณาระบุ…',
+    submitBtn:'ส่งคำขอ', submitting:'กำลังส่ง…',
+    successTitle:'ส่งคำขอสำเร็จ!', successMsg:'เราจะเสนอราคาภายใน 24 ชั่วโมง',
+    queryCodeLabel:'รหัสสอบถามของคุณ', copyCode:'คัดลอกรหัส', copied:'คัดลอกแล้ว!',
+    saveCodeTip:'กรุณาเก็บรหัสนี้ไว้เพื่อตรวจสอบสถานะใบเสนอราคา',
+    closeModal:'รับทราบ',
+    queryTitle:'ตรวจสอบใบเสนอราคา', querySubtitle:'กรอกรหัสสอบถามเพื่อดูสถานะ',
+    queryCodePh:'กรอกรหัส 8 หลัก', queryBtn:'ค้นหา', querying:'กำลังค้นหา…',
+    statusPending:'กำลังดำเนินการ', statusQuoted:'เสนอราคาแล้ว',
+    pendingMsg:'ยังไม่ได้รับใบเสนอราคา กรุณากลับมาตรวจสอบภายหลัง',
+    pendingDetail:'เรากำลังจัดเตรียมใบเสนอราคา คาดว่าจะเสร็จภายใน 24 ชั่วโมง',
+    notFound:'ไม่พบรายการสอบถามสำหรับรหัสนี้',
+    notFoundDetail:'กรุณาตรวจสอบรหัสสอบถามของคุณอีกครั้ง',
+    quoteTitle:'รายละเอียดใบเสนอราคา', totalPrice:'ราคารวม',
+    transitTime:'ระยะเวลาขนส่ง', transitDays:'วัน',
+    validUntil:'ใช้ได้ถึง', breakdown:'รายละเอียดค่าใช้จ่าย', quoteRemarks:'หมายเหตุ',
+    inquirySummary:'ข้อมูลคำขอ', route:'เส้นทาง',
+    required:'กรุณากรอกข้อมูลนี้', invalidEmail:'กรุณากรอกอีเมลที่ถูกต้อง',
+    modeLabels:{SEA:'ทางทะเล',AIR:'ทางอากาศ',RAIL:'ทางรถไฟ',ROAD:'ทางถนน'},
+  },
+  vi: {
+    brand:'SEAWIN Báo giá', tabInquiry:'Yêu cầu báo giá', tabQuery:'Tra cứu báo giá',
+    sectionTransport:'Phương thức vận chuyển',
+    modeSea:'Đường biển', modeAir:'Đường hàng không', modeRail:'Đường sắt', modeRoad:'Đường bộ',
+    sectionRoute:'Thông tin tuyến đường',
+    origin:'Nơi đi', originPh:'VD: Thượng Hải / CNSHA',
+    destination:'Nơi đến', destinationPh:'VD: Los Angeles / USLAX',
+    incoterms:'Điều khoản thương mại', cargoReadyDate:'Ngày hàng sẵn sàng', dpPlaceholder:'Chọn ngày', dpToday:'Hôm nay',
+    dpMonths:['Th1','Th2','Th3','Th4','Th5','Th6','Th7','Th8','Th9','Th10','Th11','Th12'],
+    dpWeekdays:['CN','T2','T3','T4','T5','T6','T7'],
+    sectionCargo:'Chi tiết hàng hóa',
+    commodity:'Tên hàng', commodityPh:'VD: Thiết bị điện tử',
+    grossWeight:'Trọng lượng (KG)', volume:'Thể tích (CBM)', pieces:'Số kiện',
+    containerType:'Loại container', containerQty:'Số lượng container',
+    cargoCategory:'Loại hàng hóa', prePackedFood:'Thực phẩm đóng gói', nonAlcoholDrink:'Đồ uống không cồn', alcoholDrink:'Đồ uống có cồn', petFood:'Thức ăn thú cưng', freshFood:'Thực phẩm tươi sống', frozenFood:'Thực phẩm đông lạnh',
+    sectionContact:'Thông tin liên hệ',
+    companyName:'Tên công ty', contactPerson:'Người liên hệ', email:'Email', phone:'Điện thoại',
+    sectionRemarks:'Ghi chú bổ sung', remarksPh:'Nếu có yêu cầu đặc biệt xin vui lòng ghi rõ…',
+    submitBtn:'Gửi yêu cầu', submitting:'Đang gửi…',
+    successTitle:'Gửi yêu cầu thành công!', successMsg:'Chúng tôi sẽ báo giá trong vòng 24 giờ',
+    queryCodeLabel:'Mã tra cứu của bạn', copyCode:'Sao chép mã', copied:'Đã sao chép!',
+    saveCodeTip:'Vui lòng lưu giữ mã này để tra cứu trạng thái báo giá',
+    closeModal:'Đã hiểu',
+    queryTitle:'Tra cứu báo giá', querySubtitle:'Nhập mã tra cứu để xem trạng thái báo giá',
+    queryCodePh:'Nhập mã 8 chữ số', queryBtn:'Tìm kiếm', querying:'Đang tìm…',
+    statusPending:'Đang xử lý', statusQuoted:'Đã báo giá',
+    pendingMsg:'Chưa có báo giá, vui lòng quay lại sau.',
+    pendingDetail:'Chúng tôi đang chuẩn bị báo giá, dự kiến hoàn thành trong 24 giờ.',
+    notFound:'Không tìm thấy yêu cầu với mã tra cứu này',
+    notFoundDetail:'Vui lòng kiểm tra lại mã tra cứu của bạn',
+    quoteTitle:'Chi tiết báo giá', totalPrice:'Tổng giá',
+    transitTime:'Thời gian vận chuyển', transitDays:'ngày',
+    validUntil:'Hiệu lực đến', breakdown:'Chi tiết chi phí', quoteRemarks:'Ghi chú',
+    inquirySummary:'Thông tin yêu cầu', route:'Tuyến đường',
+    required:'Trường này là bắt buộc', invalidEmail:'Vui lòng nhập email hợp lệ',
+    modeLabels:{SEA:'Đường biển',AIR:'Đường hàng không',RAIL:'Đường sắt',ROAD:'Đường bộ'},
   }
 };
 
@@ -720,16 +841,32 @@ function applyLang(){
     const key = el.getAttribute('data-i18n-ph');
     if(T[lang][key] !== undefined) el.placeholder = T[lang][key];
   });
-  document.getElementById('langLabel').textContent = lang === 'zh' ? 'EN' : '中文';
-  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  const langCodes = {en:'en',zh:'zh-CN',th:'th',vi:'vi'};
+  const langLabels = {en:'English',zh:'中文',th:'ภาษาไทย',vi:'Tiếng Việt'};
+  document.documentElement.lang = langCodes[lang] || 'en';
+  document.getElementById('langPickerLabel').textContent = langLabels[lang] || 'English';
+  document.querySelectorAll('.lang-picker-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
   if(typeof dpRefreshDisplay === 'function') dpRefreshDisplay();
 }
 
-function toggleLang(){
-  lang = lang === 'zh' ? 'en' : 'zh';
+function pickLang(val){
+  lang = val;
   localStorage.setItem('xj_lang', lang);
   applyLang();
+  document.getElementById('langPickerMenu').classList.remove('open');
 }
+
+document.getElementById('langPickerBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  document.getElementById('langPickerMenu').classList.toggle('open');
+});
+document.addEventListener('click', function(e){
+  if(!document.getElementById('langPicker').contains(e.target)){
+    document.getElementById('langPickerMenu').classList.remove('open');
+  }
+});
 
 // ======================= View Switch =======================
 function switchView(tab){
@@ -827,6 +964,10 @@ function dpSelect(iso){
   const m = parseInt(parts[1], 10) - 1;
   if(lang === 'zh'){
     dpDisplay.textContent = `${parts[0]}年${parseInt(parts[1],10)}月${parseInt(parts[2],10)}日`;
+  } else if(lang === 'th'){
+    dpDisplay.textContent = `${parseInt(parts[2],10)} ${months[m]} ${parts[0]}`;
+  } else if(lang === 'vi'){
+    dpDisplay.textContent = `${parseInt(parts[2],10)} ${months[m]} ${parts[0]}`;
   } else {
     dpDisplay.textContent = `${months[m]} ${parseInt(parts[2],10)}, ${parts[0]}`;
   }
@@ -860,7 +1001,7 @@ function validateForm(){
     {id:'origin'}, {id:'destination'}, {id:'cargoReadyDate'},
     {id:'commodity'}, {id:'grossWeight'}, {id:'volume'}, {id:'pieces'},
     {id:'companyName'}, {id:'contactPerson'},
-    {id:'email', type:'email'}, {id:'phone'}
+    {id:'email', type:'email'}
   ];
   fields.forEach(f => {
     const el = document.getElementById(f.id);
