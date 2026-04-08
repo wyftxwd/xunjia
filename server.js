@@ -9,14 +9,14 @@ const IS_VERCEL = process.env.VERCEL === '1';
 const DATA_DIR = IS_VERCEL ? '/tmp' : path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'inquiries.json');
 
-// --------------- SMTP Config (placeholder – fill in later) ---------------
-const SMTP_HOST = process.env.SMTP_HOST || '';
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
-const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
-const SMTP_USER = process.env.SMTP_USER || '';
-const SMTP_PASS = process.env.SMTP_PASS || '';
+// --------------- SMTP Config (腾讯企业邮箱) ---------------
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.exmail.qq.com';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465', 10);
+const SMTP_SECURE = (process.env.SMTP_SECURE || 'true') === 'true';
+const SMTP_USER = process.env.SMTP_USER || 'bluefish@sea-win.com.cn';
+const SMTP_PASS = process.env.SMTP_PASS || 'Seawin-123456';
 const SENDER_NAME = process.env.SENDER_NAME || 'SEAWIN';
-const SENDER_EMAIL = process.env.SENDER_EMAIL || 'noreply@xunjia.com';
+const SENDER_EMAIL = process.env.SENDER_EMAIL || 'bluefish@sea-win.com.cn';
 
 // --------------- Middleware ---------------
 app.use(express.json());
@@ -71,26 +71,69 @@ const EMAIL_T = {
   regards:    {en:'Best regards,',zh:'此致敬礼，',th:'ด้วยความนับถือ,',vi:'Trân trọng,'},
 };
 function et(key, lang){ return EMAIL_T[key][lang] || EMAIL_T[key].en; }
+const isEn = (lang) => lang === 'en';
 
-function inquiryEmailHtml(code, lang) {
+function biTitle(key, lang) {
+  if (isEn(lang)) return `<h2 style="color:#111827;font-size:20px;font-weight:600;margin:0 0 20px;">${et(key,'en')}</h2>`;
+  return `<h2 style="color:#111827;font-size:20px;font-weight:600;margin:0 0 4px;">${et(key,lang)}</h2>
+  <p style="color:#9ca3af;font-size:13px;font-weight:400;margin:0 0 20px;font-style:italic;">${et(key,'en')}</p>`;
+}
+
+function biPara(key, lang) {
+  if (isEn(lang)) return `<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 24px;">${et(key,'en')}</p>`;
+  return `<p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 6px;">${et(key,lang)}</p>
+  <p style="color:#9ca3af;font-size:12.5px;line-height:1.7;margin:0 0 24px;">${et(key,'en')}</p>`;
+}
+
+function biLabel(key, lang) {
+  if (isEn(lang)) return et(key,'en');
+  return `${et(key,lang)}<br><span style="color:#b0b7c3;font-size:11px;">${et(key,'en')}</span>`;
+}
+
+function biFooterLine(key, lang) {
+  if (isEn(lang)) return et(key,'en');
+  return `${et(key,lang)}<br><span style="color:#b0b7c3;font-size:11px;">${et(key,'en')}</span>`;
+}
+
+const LOGO_URL = 'https://xunjia-vert.vercel.app/logo.png';
+
+function emailShell(lang, bodyHtml) {
+  const moreLocal = isEn(lang) ? '' : `<span style="color:#6b7280;font-size:13px;">${et('moreTools',lang)}</span><br>`;
+  const regardsLocal = isEn(lang) ? '' : `${et('regards',lang)}<br>`;
   return `
-<div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
-  <div style="text-align:center;margin-bottom:24px;">
-    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${et('brandSub',lang)}</h1>
+<div style="font-family:'Helvetica Neue','PingFang SC','Microsoft YaHei',Arial,sans-serif;max-width:600px;margin:0 auto;padding:0;background:#ffffff;">
+  <div style="padding:28px 36px 20px;">
+    <img src="${LOGO_URL}" alt="SEAWIN" width="120" style="display:block;height:auto;" />
   </div>
-  <div style="background:#f8fafc;border-radius:12px;padding:28px;border:1px solid #e2e8f0;">
-    <h2 style="color:#1e293b;margin:0 0 12px;">${et('inqTitle',lang)}</h2>
-    <p style="color:#475569;line-height:1.7;margin:0 0 16px;">${et('inqBody',lang)}</p>
-    <div style="background:#2563EB;color:#fff;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">
-      <p style="margin:0 0 6px;font-size:13px;opacity:.85;">${et('queryCode',lang)}</p>
-      <p style="margin:0;font-size:30px;font-weight:700;letter-spacing:4px;">${code}</p>
-    </div>
-    <p style="color:#475569;line-height:1.7;margin:0;">${et('keepCode',lang)}</p>
-    <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
-    <p style="color:#475569;font-size:12.5px;margin:0 0 12px;">${et('moreTools',lang)} <a href="https://pc.iloveseawin.com/" style="color:#2563EB;text-decoration:none;font-weight:500;">pc.iloveseawin.com</a></p>
-    <p style="color:#94a3b8;font-size:12px;margin:0;">${et('regards',lang)}<br>${SENDER_NAME} Team</p>
+  <div style="padding:0 36px;"><div style="border-top:2px solid #e5e7eb;"></div></div>
+  <div style="padding:28px 36px 16px;">
+    ${bodyHtml}
+  </div>
+  <div style="padding:0 36px;"><div style="border-top:1px solid #e5e7eb;"></div></div>
+  <div style="padding:20px 36px 32px;">
+    <p style="margin:0 0 10px;line-height:1.8;">
+      ${moreLocal}<span style="color:#9ca3af;font-size:12px;">${et('moreTools','en')} <a href="https://pc.iloveseawin.com/" style="color:#2563EB;text-decoration:none;">pc.iloveseawin.com</a></span>
+    </p>
+    <p style="margin:0;line-height:1.8;">
+      ${regardsLocal}<span style="color:#9ca3af;font-size:12px;">${et('regards','en')}</span><br><span style="color:#9ca3af;font-size:12px;">SEAWIN ${isEn(lang) ? '' : et('brandSub',lang)}</span>
+    </p>
   </div>
 </div>`;
+}
+
+function inquiryEmailHtml(code, lang) {
+  const body = `
+    ${biTitle('inqTitle', lang)}
+    ${biPara('inqBody', lang)}
+    <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">
+      <tr>
+        <td style="padding:12px 16px;background:#f9fafb;border:1px solid #e5e7eb;font-size:13px;color:#6b7280;width:140px;">${biLabel('queryCode',lang)}</td>
+        <td style="padding:12px 16px;background:#ffffff;border:1px solid #e5e7eb;font-size:20px;font-weight:700;color:#111827;letter-spacing:3px;">${code}</td>
+      </tr>
+    </table>
+    <p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 6px;">${et('keepCode',lang)}</p>
+    ${isEn(lang) ? '' : `<p style="color:#9ca3af;font-size:12.5px;line-height:1.7;margin:0;">${et('keepCode','en')}</p>`}`;
+  return emailShell(lang, body);
 }
 
 const MODE_NAMES = {
@@ -102,76 +145,31 @@ const MODE_NAMES = {
 
 function quoteEmailHtml(inquiry, lang) {
   const q = inquiry.quote;
-  const modeName = (MODE_NAMES[inquiry.shipmentMode] || {})[lang] || inquiry.shipmentMode;
-  const rowStyle = 'padding:8px 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;';
-  const labelStyle = 'color:#64748b;font-size:13px;';
-  const valueStyle = 'color:#1e293b;font-size:13px;font-weight:500;text-align:right;';
+  const modeLang = (MODE_NAMES[inquiry.shipmentMode] || {})[lang] || inquiry.shipmentMode;
+  const modeEn = (MODE_NAMES[inquiry.shipmentMode] || {}).en || inquiry.shipmentMode;
+  const modeVal = isEn(lang) ? modeEn : `${modeLang} <span style="color:#9ca3af;font-size:12px;">${modeEn}</span>`;
+  const transitVal = isEn(lang) ? `${q.transitTime} ${et('qDays','en')}` : `${q.transitTime} ${et('qDays',lang)} <span style="color:#9ca3af;font-size:12px;">${et('qDays','en')}</span>`;
 
-  let breakdownHtml = '';
-  if (q.breakdown) {
-    breakdownHtml = `
-    <div style="margin-top:16px;">
-      <p style="color:#64748b;font-size:13px;margin:0 0 6px;">${et('qBreakdown',lang)}</p>
-      <div style="background:#f8fafc;border-radius:8px;padding:12px 14px;border:1px solid #e2e8f0;">
-        <pre style="margin:0;white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:#334155;line-height:1.6;">${q.breakdown}</pre>
-      </div>
-    </div>`;
-  }
+  const tr = (key, value) =>
+    `<tr><td style="padding:10px 14px;background:#f9fafb;border:1px solid #e5e7eb;font-size:13px;color:#6b7280;width:140px;">${biLabel(key,lang)}</td><td style="padding:10px 14px;border:1px solid #e5e7eb;font-size:14px;color:#111827;font-weight:500;">${value}</td></tr>`;
 
-  let remarksHtml = '';
-  if (q.remarks) {
-    remarksHtml = `
-    <div style="margin-top:12px;">
-      <p style="color:#64748b;font-size:13px;margin:0 0 4px;">${et('qRemarks',lang)}</p>
-      <p style="color:#334155;font-size:13px;margin:0;line-height:1.6;">${q.remarks}</p>
-    </div>`;
-  }
+  let rows = '';
+  rows += tr('qPrice', `<span style="font-size:18px;font-weight:700;color:#111827;">${q.currency} ${Number(q.totalPrice).toLocaleString()}</span>`);
+  rows += tr('qRoute', `${inquiry.origin} → ${inquiry.destination}`);
+  rows += tr('qMode', modeVal);
+  if (inquiry.commodity) rows += tr('qCommodity', inquiry.commodity);
+  rows += tr('qTransit', transitVal);
+  rows += tr('qValid', q.validUntil);
+  if (q.breakdown) rows += tr('qBreakdown', `<pre style="margin:0;white-space:pre-wrap;font-family:inherit;font-size:13px;color:#374151;line-height:1.6;">${q.breakdown}</pre>`);
+  if (q.remarks) rows += tr('qRemarks', q.remarks);
 
-  return `
-<div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
-  <div style="text-align:center;margin-bottom:24px;">
-    <h1 style="color:#2563EB;font-size:22px;margin:0;">SEAWIN ${et('brandSub',lang)}</h1>
-  </div>
-  <div style="background:#f8fafc;border-radius:12px;padding:28px;border:1px solid #e2e8f0;">
-    <h2 style="color:#1e293b;margin:0 0 12px;">${et('quoteTitle',lang)}</h2>
-    <p style="color:#475569;line-height:1.7;margin:0 0 20px;">${et('quoteBody',lang)}</p>
-
-    <div style="background:#10B981;color:#fff;border-radius:10px;padding:20px;text-align:center;margin:0 0 20px;">
-      <p style="margin:0 0 4px;font-size:13px;opacity:.85;">${et('qPrice',lang)}</p>
-      <p style="margin:0;font-size:32px;font-weight:700;letter-spacing:1px;">${q.currency} ${Number(q.totalPrice).toLocaleString()}</p>
-    </div>
-
-    <table style="width:100%;border-collapse:collapse;font-size:13px;">
-      <tr style="border-bottom:1px solid #f1f5f9;">
-        <td style="padding:9px 0;color:#64748b;">${et('qRoute',lang)}</td>
-        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${inquiry.origin} → ${inquiry.destination}</td>
-      </tr>
-      <tr style="border-bottom:1px solid #f1f5f9;">
-        <td style="padding:9px 0;color:#64748b;">${et('qMode',lang)}</td>
-        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${modeName}</td>
-      </tr>
-      ${inquiry.commodity ? `<tr style="border-bottom:1px solid #f1f5f9;">
-        <td style="padding:9px 0;color:#64748b;">${et('qCommodity',lang)}</td>
-        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${inquiry.commodity}</td>
-      </tr>` : ''}
-      <tr style="border-bottom:1px solid #f1f5f9;">
-        <td style="padding:9px 0;color:#64748b;">${et('qTransit',lang)}</td>
-        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${q.transitTime} ${et('qDays',lang)}</td>
-      </tr>
-      <tr>
-        <td style="padding:9px 0;color:#64748b;">${et('qValid',lang)}</td>
-        <td style="padding:9px 0;color:#1e293b;font-weight:500;text-align:right;">${q.validUntil}</td>
-      </tr>
-    </table>
-    ${breakdownHtml}
-    ${remarksHtml}
-
-    <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
-    <p style="color:#475569;font-size:12.5px;line-height:1.6;margin:0 0 12px;">${et('qContact',lang)}</p>
-    <p style="color:#475569;font-size:12.5px;margin:0 0 12px;">${et('moreTools',lang)} <a href="https://pc.iloveseawin.com/" style="color:#2563EB;text-decoration:none;font-weight:500;">pc.iloveseawin.com</a></p>
-    <p style="color:#94a3b8;font-size:12px;margin:0;">${et('regards',lang)}<br>${SENDER_NAME} Team</p>
-  </div>
-</div>`;
+  const body = `
+    ${biTitle('quoteTitle', lang)}
+    ${biPara('quoteBody', lang)}
+    <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">${rows}</table>
+    <p style="color:#374151;font-size:14px;line-height:1.8;margin:0 0 6px;">${et('qContact',lang)}</p>
+    ${isEn(lang) ? '' : `<p style="color:#9ca3af;font-size:12.5px;line-height:1.7;margin:0;">${et('qContact','en')}</p>`}`;
+  return emailShell(lang, body);
 }
 
 async function sendEmail(to, type, codeOrInquiry, lang) {
@@ -239,7 +237,7 @@ app.post('/api/inquiry', async (req, res) => {
     };
     data.push(inquiry);
     writeData(data);
-    // sendEmail(inquiry.email, 'inquiry', queryCode, inquiry.lang); // TODO: 暂时禁用邮件
+    sendEmail(inquiry.email, 'inquiry', queryCode, inquiry.lang);
     res.json({ success: true, queryCode });
   } catch (err) {
     console.error(err);
@@ -304,7 +302,7 @@ app.put('/api/admin/quote/:code', async (req, res) => {
   };
   data[idx].quotedAt = new Date().toISOString();
   writeData(data);
-  // sendEmail(data[idx].email, 'quote', data[idx], data[idx].lang); // TODO: 暂时禁用邮件
+  sendEmail(data[idx].email, 'quote', data[idx], data[idx].lang);
   res.json({ success: true });
 });
 

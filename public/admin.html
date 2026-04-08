@@ -345,31 +345,25 @@ h1,h2,h3{font-family:'Outfit','Noto Sans SC',sans-serif;font-weight:600}
 <div class="modal-bg" id="shareModal">
   <div class="modal" style="max-width:440px;">
     <div class="modal-header">
-      <h3>生成分享链接 Generate Share Link</h3>
+      <h3>我的推广链接 My Share Link</h3>
       <button class="modal-close" onclick="closeShareModal()"><i data-lucide="x"></i></button>
     </div>
     <div class="modal-body">
-      <div class="mfield">
-        <label>标识名 Your Name / ID *</label>
-        <input type="text" id="shareRefName" placeholder="例：张三 / ZS001">
-      </div>
-      <div class="mfield">
-        <label>网站地址 Site URL</label>
-        <input type="text" id="shareSiteUrl" placeholder="稍后配置">
-      </div>
-      <div style="text-align:center;margin-top:6px;">
-        <button class="btn btn-submit" onclick="generateShareLink()" style="padding:9px 28px;border-radius:8px;border:none;background:var(--pri);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;">生成 Generate</button>
-      </div>
-      <div class="share-result" id="shareResult">
-        <div style="font-size:12.5px;color:var(--text2);margin-bottom:6px;font-weight:500;">分享链接 Share Link</div>
-        <div class="share-link-box">
-          <input type="text" id="shareLinkOutput" readonly>
-          <button class="copy-btn" onclick="copyShareLink()">复制 Copy</button>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--border-l);border-radius:10px;margin-bottom:18px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Outfit',sans-serif;font-size:15px;" id="shareUserAvatar"></div>
+        <div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--text);" id="shareUserName">—</div>
+          <div style="font-size:11.5px;color:var(--text3);">当前登录账号 Current Account</div>
         </div>
-        <div style="font-size:12.5px;color:var(--text2);margin-bottom:8px;font-weight:500;">二维码 QR Code</div>
-        <div class="share-qr-wrap">
-          <div id="shareQrCode"></div>
-        </div>
+      </div>
+      <div style="font-size:12.5px;color:var(--text2);margin-bottom:6px;font-weight:500;">分享链接 Share Link</div>
+      <div class="share-link-box">
+        <input type="text" id="shareLinkOutput" readonly>
+        <button class="copy-btn" onclick="copyShareLink()">复制 Copy</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--text2);margin-bottom:8px;font-weight:500;">二维码 QR Code</div>
+      <div class="share-qr-wrap">
+        <div id="shareQrCode"></div>
       </div>
     </div>
   </div>
@@ -550,36 +544,54 @@ async function deleteInquiry(code){
 }
 
 // ======================= Share Link =======================
+// ---- 配置区 ----
+const SHARE_BASE_URL = 'https://xunjia-vert.vercel.app';
+
+/**
+ * 获取当前登录账号标识。
+ * 优先级：window.CURRENT_USER > localStorage('currentUser') > URL ?user= > 'unknown'
+ * 宿主系统登录后只需设置 window.CURRENT_USER = { id:'xxx', name:'张三' } 即可。
+ */
+function getCurrentUser(){
+  if(window.CURRENT_USER) return window.CURRENT_USER;
+  try{
+    const stored = localStorage.getItem('currentUser');
+    if(stored){ const u = JSON.parse(stored); if(u && u.id) return u; }
+  }catch(e){}
+  const p = new URLSearchParams(location.search);
+  if(p.get('user')) return { id: p.get('user'), name: p.get('user') };
+  return null;
+}
+
 function openShareModal(){
-  document.getElementById('shareRefName').value = '';
-  document.getElementById('shareSiteUrl').value = '';
-  document.getElementById('shareResult').classList.remove('show');
-  document.getElementById('shareQrCode').innerHTML = '';
+  const user = getCurrentUser();
+  if(!user){
+    alert('未检测到登录账号，请先登录。\nNo logged-in account detected. Please login first.');
+    return;
+  }
+  const nameStr = user.name || user.id;
+  document.getElementById('shareUserAvatar').textContent = nameStr.charAt(0).toUpperCase();
+  document.getElementById('shareUserName').textContent = nameStr;
+
+  const url = `${SHARE_BASE_URL}?ref=${encodeURIComponent(user.id)}`;
+  document.getElementById('shareLinkOutput').value = url;
+
+  const qrWrap = document.getElementById('shareQrCode');
+  qrWrap.innerHTML = '';
+  new QRCode(qrWrap, { text: url, width: 180, height: 180, colorDark: '#0F172A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+
   document.getElementById('shareModal').classList.add('show');
   lucide.createIcons();
 }
 function closeShareModal(){ document.getElementById('shareModal').classList.remove('show'); }
 
-function generateShareLink(){
-  const name = document.getElementById('shareRefName').value.trim();
-  if(!name){ alert('请输入标识名 / Please enter your name or ID'); return; }
-  const siteUrl = document.getElementById('shareSiteUrl').value.trim();
-  const base = siteUrl || window.location.origin;
-  const url = `${base}?ref=${encodeURIComponent(name)}`;
-  document.getElementById('shareLinkOutput').value = url;
-  const qrWrap = document.getElementById('shareQrCode');
-  qrWrap.innerHTML = '';
-  new QRCode(qrWrap, { text: url, width: 180, height: 180, colorDark: '#0F172A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-  document.getElementById('shareResult').classList.add('show');
-}
-
 function copyShareLink(){
   const input = document.getElementById('shareLinkOutput');
   input.select();
-  document.execCommand('copy');
+  navigator.clipboard.writeText(input.value).catch(()=>document.execCommand('copy'));
   const btn = input.nextElementSibling;
   const orig = btn.textContent;
-  btn.textContent = '已复制!';
+  btn.textContent = '已复制 ✓';
   setTimeout(()=>{ btn.textContent = orig; }, 1500);
 }
 
