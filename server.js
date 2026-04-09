@@ -173,6 +173,10 @@ function quoteEmailHtml(inquiry, lang) {
 }
 
 async function sendEmail(to, type, codeOrInquiry, lang) {
+  if (!to || !String(to).trim()) {
+    console.log(`[Email Skip] No recipient email. Type=${type}`);
+    return;
+  }
   const transporter = buildTransporter();
   if (!transporter) {
     console.log(`[Email Skip] SMTP not configured. Type=${type} To=${to}`);

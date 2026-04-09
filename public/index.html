@@ -107,6 +107,91 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
   content:'';width:3px;height:16px;border-radius:2px;
   background:linear-gradient(180deg,var(--pri),var(--pri-l));
 }
+.section-title-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.section-title-row .section-title{margin-bottom:0}
+.surcharge-btn{
+  border:none;background:none;cursor:pointer;
+  color:var(--pri);font-size:12.5px;font-weight:600;
+  padding:4px 0;line-height:1;
+  text-decoration:underline;text-underline-offset:2px;
+  text-decoration-color:rgba(37,99,235,.5);
+}
+.surcharge-btn:active{opacity:.75}
+
+/* ---------- AI Recognition Module ---------- */
+.ai-section{
+  background:var(--card);
+  border-radius:var(--r-card);box-shadow:var(--shadow);
+  padding:20px;margin-bottom:14px;
+  border:1px solid rgba(37,99,235,.16);
+  position:relative;overflow:hidden;
+}
+.ai-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ai-header .ai-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,var(--pri),var(--pri-l));
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.ai-header .ai-icon svg{width:16px;height:16px;color:#fff}
+.ai-header .ai-title{
+  font-size:14px;font-weight:600;color:var(--text);
+  font-family:'Outfit','Noto Sans SC',sans-serif;
+}
+.ai-hint{
+  font-size:12px;color:var(--text3);margin-bottom:14px;
+  padding-left:36px;line-height:1.5;
+}
+.ai-input-wrap{position:relative}
+.ai-input-wrap textarea{
+  width:100%;min-height:100px;max-height:200px;padding:14px;
+  padding-bottom:48px;
+  font-size:13.5px;line-height:1.7;color:var(--text);
+  background:#fff;
+  border:1.5px solid rgba(37,99,235,.16);border-radius:12px;
+  outline:none;resize:vertical;font-family:inherit;
+  transition:border-color .2s,box-shadow .2s;
+}
+.ai-input-wrap textarea::placeholder{color:var(--text3);font-size:13px}
+.ai-input-wrap textarea:focus{
+  border-color:rgba(37,99,235,.45);
+  box-shadow:0 0 0 3px rgba(37,99,235,.08);
+}
+.ai-actions{
+  position:absolute;right:10px;bottom:10px;
+  display:flex;gap:6px;
+}
+.ai-btn{
+  padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:4px;
+  font-family:inherit;
+}
+.ai-btn svg{width:13px;height:13px}
+.ai-btn-clear{
+  background:rgba(148,163,184,.1);color:var(--text3);
+}
+.ai-btn-clear:hover{background:rgba(148,163,184,.2);color:var(--text2)}
+.ai-btn-fill{
+  background:linear-gradient(135deg,var(--pri),var(--pri-l));color:#fff;
+}
+.ai-btn-fill:hover{
+  background:linear-gradient(135deg,var(--pri-d),var(--pri));
+  box-shadow:0 2px 8px rgba(37,99,235,.3);
+}
+.ai-btn-fill:active{transform:scale(.97)}
+.ai-btn-fill.loading{
+  opacity:.7;pointer-events:none;
+}
+.ai-btn-fill.loading::after{
+  content:'';width:12px;height:12px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:aiSpin .6s linear infinite;margin-left:4px;
+}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
 
 /* ---------- Transport Mode Grid ---------- */
 .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -381,6 +466,97 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
 }
 .modal-close-btn:active{background:var(--border)}
 
+/* ---------- Surcharge Modal ---------- */
+.surcharge-modal{
+  background:var(--card);border-radius:16px;width:100%;max-width:360px;
+  padding:18px 16px 16px;
+  box-shadow:0 18px 50px rgba(0,0,0,.16);
+  animation:modalIn .3s ease;
+}
+.surcharge-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.surcharge-title{font-size:15px;font-weight:600;color:var(--text)}
+.surcharge-close{
+  width:28px;height:28px;border:none;border-radius:8px;cursor:pointer;
+  background:var(--border-l);color:var(--text2);display:flex;align-items:center;justify-content:center;
+}
+.surcharge-close svg{width:16px;height:16px}
+.surcharge-filter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.surcharge-filter .field{margin:0}
+.surcharge-picker{position:relative}
+.surcharge-picker-btn{
+  width:100%;height:42px;padding:0 34px 0 12px;
+  border:1.5px solid var(--border);border-radius:10px;background:#fff;
+  color:var(--text);font-size:13px;font-weight:500;text-align:left;cursor:pointer;
+  display:flex;align-items:center;
+}
+.surcharge-picker-btn:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.surcharge-picker-btn::after{
+  content:'';position:absolute;right:12px;top:50%;margin-top:-2px;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #94A3B8;
+}
+.surcharge-picker-menu{
+  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:130;
+  max-height:220px;overflow:auto;background:#fff;border:1px solid var(--border);
+  border-radius:10px;box-shadow:0 12px 28px rgba(15,23,42,.14);
+  display:none;
+}
+.surcharge-picker.open .surcharge-picker-menu{display:block}
+.surcharge-picker-item{
+  padding:9px 12px;font-size:13px;color:var(--text);cursor:pointer;
+  border-bottom:1px solid var(--border-l);
+}
+.surcharge-picker-item:last-child{border-bottom:none}
+.surcharge-picker-item:hover{background:rgba(37,99,235,.06)}
+.surcharge-picker-item.active{background:rgba(37,99,235,.1);color:var(--pri);font-weight:600}
+.surcharge-legend{
+  font-size:12px;color:var(--text3);line-height:1.6;
+  background:var(--border-l);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;margin-bottom:10px;
+}
+.surcharge-list{
+  max-height:52vh;overflow:auto;padding-right:2px;
+  display:grid;grid-template-columns:1fr;gap:10px;
+}
+.surcharge-card{
+  border:1px solid var(--border);border-radius:12px;background:#fff;
+  overflow:hidden;
+}
+.surcharge-card-head{
+  background:linear-gradient(135deg,var(--pri),var(--pri-l));
+  color:#fff;padding:9px 12px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.surcharge-card-head .port{
+  font-size:12px;font-weight:600;opacity:.95;
+}
+.surcharge-fees{
+  padding:10px 12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+}
+.fee-item{
+  background:var(--border-l);border-radius:8px;padding:8px 8px;
+  text-align:center;min-height:76px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.fee-item .k{
+  font-size:11px;color:var(--text3);line-height:1.2;
+  min-height:28px;display:flex;align-items:center;justify-content:center;
+}
+.fee-item .v{
+  font-size:18px;font-weight:800;color:#EF4444;line-height:1;
+  display:flex;align-items:flex-end;justify-content:center;gap:4px;
+}
+.fee-item .v .u{
+  font-size:11px;font-weight:700;color:#F97316;letter-spacing:.2px;
+}
+.surcharge-empty{
+  border:1px dashed var(--border);border-radius:10px;
+  background:var(--border-l);color:var(--text3);
+  font-size:12.5px;text-align:center;padding:16px;line-height:1.6;
+}
+
 /* ---------- Utilities ---------- */
 .hidden{display:none!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -428,6 +604,30 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
 <div id="view-inquiry" class="view active">
   <form id="inquiryForm" autocomplete="off" novalidate>
 
+    <!-- AI Smart Recognition -->
+    <div class="ai-section">
+      <div class="ai-header">
+        <div class="ai-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/></svg>
+        </div>
+        <span class="ai-title" data-i18n="aiTitle"></span>
+      </div>
+      <div class="ai-hint" data-i18n="aiHint"></div>
+      <div class="ai-input-wrap">
+        <textarea id="aiInput" data-i18n-ph="aiPlaceholder"></textarea>
+        <div class="ai-actions">
+          <button type="button" class="ai-btn ai-btn-clear" onclick="aiClear()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            <span data-i18n="aiClear"></span>
+          </button>
+          <button type="button" class="ai-btn ai-btn-fill" id="aiFillBtn" onclick="aiRecognize()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5V5a1 1 0 0 0 1 1h4a2 2 0 0 1 2 2v1"/><path d="M13.5 22A2.5 2.5 0 0 1 11 19.5V19a1 1 0 0 0-1-1H6a2 2 0 0 1-2-2v-1"/><path d="M2 13.5A2.5 2.5 0 0 1 4.5 11H5a1 1 0 0 0 1-1V6a2 2 0 0 1 2-2h1"/><path d="M22 9.5A2.5 2.5 0 0 1 19.5 12H19a1 1 0 0 0-1 1v4a2 2 0 0 1-2 2h-1"/></svg>
+            <span data-i18n="aiFill"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Transport Mode -->
     <div class="section">
       <div class="section-title" data-i18n="sectionTransport"></div>
@@ -457,7 +657,10 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
 
     <!-- Route Information -->
     <div class="section">
-      <div class="section-title" data-i18n="sectionRoute"></div>
+      <div class="section-title-row">
+        <div class="section-title" data-i18n="sectionRoute"></div>
+        <button type="button" class="surcharge-btn" onclick="openSurchargeModal()" data-i18n="surchargeQuery"></button>
+      </div>
       <div class="field">
         <label data-i18n="origin"><span class="req">*</span></label>
         <input type="text" id="origin" required data-i18n-ph="originPh">
@@ -584,8 +787,8 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
     <div class="section">
       <div class="section-title" data-i18n="sectionContact"></div>
       <div class="field">
-        <label data-i18n="companyName"><span class="req">*</span></label>
-        <input type="text" id="companyName" required>
+        <label data-i18n="companyName"></label>
+        <input type="text" id="companyName">
         <div class="error-msg" data-i18n="required"></div>
       </div>
       <div class="field">
@@ -594,8 +797,8 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
         <div class="error-msg" data-i18n="required"></div>
       </div>
       <div class="field">
-        <label data-i18n="email"><span class="req">*</span></label>
-        <input type="email" id="email" required inputmode="email">
+        <label data-i18n="email"></label>
+        <input type="email" id="email" inputmode="email">
         <div class="error-msg" data-i18n="invalidEmail"></div>
       </div>
       <div class="field">
@@ -669,11 +872,47 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
   </div>
 </div>
 
+<!-- Surcharge Query Modal -->
+<div class="modal-overlay" id="surchargeModal" onclick="if(event.target===this) closeSurchargeModal()">
+  <div class="surcharge-modal">
+    <div class="surcharge-head">
+      <div class="surcharge-title" data-i18n="surchargeTitle"></div>
+      <button type="button" class="surcharge-close" onclick="closeSurchargeModal()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="surcharge-filter">
+      <div class="field">
+        <label data-i18n="carrier"></label>
+        <div class="surcharge-picker" id="carrierPicker">
+          <button type="button" class="surcharge-picker-btn" id="carrierPickerBtn"></button>
+          <div class="surcharge-picker-menu" id="carrierPickerMenu"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label data-i18n="destinationPort"></label>
+        <div class="surcharge-picker" id="portPicker">
+          <button type="button" class="surcharge-picker-btn" id="portPickerBtn"></button>
+          <div class="surcharge-picker-menu" id="portPickerMenu"></div>
+        </div>
+      </div>
+    </div>
+    <div class="surcharge-legend" data-i18n="surchargeLegend"></div>
+    <div id="surchargeList" class="surcharge-list"></div>
+  </div>
+</div>
+
 <script>
 // ======================= i18n =======================
 const T = {
   zh: {
     brand:'海盟询价系统', tabInquiry:'询价', tabQuery:'查询报价',
+    surchargeQuery:'附加费查询', surchargeTitle:'附加费查询',
+    carrier:'船司', destinationPort:'目的港', allCarriers:'全部船司', allPorts:'全部目的港',
+    surchargeLegend:'DTHC(20GP/40GP·40HQ)按箱收取；D/O（换单费）按票收取，与箱量无关。',
+    dthc20:'DTHC (20GP)', dthc40:'DTHC (40GP/40HQ)', doFee:'D/O（换单费）', rmb:'RMB',
+    surchargeNoData:'当前筛选条件暂无数据',
+    aiTitle:'AI 智能识别', aiHint:'请粘贴您的询价信息，AI将自动识别并填充到表单中', aiPlaceholder:'在此粘贴询价邮件、聊天记录或货物信息…', aiClear:'清空', aiFill:'识别并填充', aiRecognizing:'识别中…', aiFillSuccess:'识别完成，已自动填充', aiFillFail:'识别失败，请检查内容后重试',
     sectionTransport:'运输方式',
     modeSea:'海运', modeAir:'空运', modeRail:'铁路', modeRoad:'公路',
     sectionRoute:'路线信息',
@@ -711,6 +950,12 @@ const T = {
   },
   en: {
     brand:'SEAWIN Inquiry', tabInquiry:'Inquiry', tabQuery:'Quote Query',
+    surchargeQuery:'Surcharge Query', surchargeTitle:'Surcharge Query',
+    carrier:'Carrier', destinationPort:'Destination Port', allCarriers:'All Carriers', allPorts:'All Ports',
+    surchargeLegend:'DTHC (20GP/40GP·40HQ) is charged per container; D/O fee is charged per shipment (B/L), independent of container count.',
+    dthc20:'DTHC (20GP)', dthc40:'DTHC (40GP/40HQ)', doFee:'D/O Fee', rmb:'RMB',
+    surchargeNoData:'No data for current filters',
+    aiTitle:'AI Smart Recognition', aiHint:'Paste your inquiry information and AI will automatically recognize and fill in the form', aiPlaceholder:'Paste inquiry email, chat logs, or cargo details here…', aiClear:'Clear', aiFill:'Recognize & Fill', aiRecognizing:'Recognizing…', aiFillSuccess:'Recognized successfully, form auto-filled', aiFillFail:'Recognition failed, please check content and try again',
     sectionTransport:'Shipment Mode',
     modeSea:'Sea Freight', modeAir:'Air Freight', modeRail:'Railway', modeRoad:'Road',
     sectionRoute:'Route Information',
@@ -748,6 +993,12 @@ const T = {
   },
   th: {
     brand:'SEAWIN สอบถามราคา', tabInquiry:'สอบถามราคา', tabQuery:'ตรวจสอบราคา',
+    surchargeQuery:'ตรวจสอบค่าธรรมเนียม', surchargeTitle:'ตรวจสอบค่าธรรมเนียม',
+    carrier:'สายเรือ', destinationPort:'ท่าปลายทาง', allCarriers:'ทุกสายเรือ', allPorts:'ทุกท่าปลายทาง',
+    surchargeLegend:'DTHC (20GP/40GP·40HQ) คิดตามจำนวนตู้; ค่าธรรมเนียม D/O คิดตามจำนวนใบ ไม่ขึ้นกับจำนวนตู้',
+    dthc20:'DTHC (20GP)', dthc40:'DTHC (40GP/40HQ)', doFee:'ค่าธรรมเนียม D/O', rmb:'RMB',
+    surchargeNoData:'ไม่พบข้อมูลตามตัวกรองปัจจุบัน',
+    aiTitle:'AI อัจฉริยะ', aiHint:'วางข้อมูลคำขอของคุณ AI จะจดจำและกรอกแบบฟอร์มโดยอัตโนมัติ', aiPlaceholder:'วางอีเมลสอบถาม แชท หรือรายละเอียดสินค้าที่นี่…', aiClear:'ล้าง', aiFill:'จดจำและกรอก', aiRecognizing:'กำลังจดจำ…', aiFillSuccess:'จดจำสำเร็จ กรอกแบบฟอร์มแล้ว', aiFillFail:'จดจำไม่สำเร็จ กรุณาตรวจสอบเนื้อหาแล้วลองอีกครั้ง',
     sectionTransport:'รูปแบบการขนส่ง',
     modeSea:'ทางทะเล', modeAir:'ทางอากาศ', modeRail:'ทางรถไฟ', modeRoad:'ทางถนน',
     sectionRoute:'ข้อมูลเส้นทาง',
@@ -785,6 +1036,12 @@ const T = {
   },
   vi: {
     brand:'SEAWIN Báo giá', tabInquiry:'Yêu cầu báo giá', tabQuery:'Tra cứu báo giá',
+    surchargeQuery:'Tra cứu phụ phí', surchargeTitle:'Tra cứu phụ phí',
+    carrier:'Hãng tàu', destinationPort:'Cảng đến', allCarriers:'Tất cả hãng tàu', allPorts:'Tất cả cảng đến',
+    surchargeLegend:'DTHC (20GP/40GP·40HQ) tính theo số container; phí D/O tính theo lô hàng (vận đơn), không phụ thuộc số container.',
+    dthc20:'DTHC (20GP)', dthc40:'DTHC (40GP/40HQ)', doFee:'Phí D/O', rmb:'RMB',
+    surchargeNoData:'Không có dữ liệu theo bộ lọc hiện tại',
+    aiTitle:'AI Nhận dạng thông minh', aiHint:'Dán thông tin yêu cầu của bạn, AI sẽ tự động nhận dạng và điền vào biểu mẫu', aiPlaceholder:'Dán email yêu cầu, tin nhắn hoặc chi tiết hàng hóa tại đây…', aiClear:'Xóa', aiFill:'Nhận dạng & Điền', aiRecognizing:'Đang nhận dạng…', aiFillSuccess:'Nhận dạng thành công, đã tự động điền', aiFillFail:'Nhận dạng thất bại, vui lòng kiểm tra nội dung và thử lại',
     sectionTransport:'Phương thức vận chuyển',
     modeSea:'Đường biển', modeAir:'Đường hàng không', modeRail:'Đường sắt', modeRoad:'Đường bộ',
     sectionRoute:'Thông tin tuyến đường',
@@ -850,6 +1107,8 @@ function applyLang(){
     el.classList.toggle('active', el.dataset.lang === lang);
   });
   if(typeof dpRefreshDisplay === 'function') dpRefreshDisplay();
+  initSurchargeFilters();
+  if(document.getElementById('surchargeModal')?.classList.contains('show')) renderSurchargeList();
 }
 
 function pickLang(val){
@@ -875,6 +1134,69 @@ function switchView(tab){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   tab.classList.add('active');
   document.getElementById(tab.dataset.view).classList.add('active');
+}
+
+// ======================= AI Smart Recognition =======================
+function aiClear(){
+  document.getElementById('aiInput').value = '';
+  document.getElementById('aiInput').focus();
+}
+
+async function aiRecognize(){
+  const input = document.getElementById('aiInput');
+  const text = input.value.trim();
+  if(!text){ input.focus(); return; }
+
+  const btn = document.getElementById('aiFillBtn');
+  const label = btn.querySelector('[data-i18n="aiFill"]');
+  const origText = label.textContent;
+  btn.classList.add('loading');
+  label.textContent = T[lang].aiRecognizing || 'Recognizing…';
+
+  try {
+    // TODO: 接入AI接口，将 text 发送到AI服务，返回结构化数据
+    // const res = await fetch('/api/ai/recognize', {
+    //   method: 'POST',
+    //   headers: {'Content-Type':'application/json'},
+    //   body: JSON.stringify({ text, lang: currentLang })
+    // });
+    // const data = await res.json();
+    // if(data.success) { aiFillForm(data.result); }
+
+    await new Promise(r => setTimeout(r, 1500));
+
+    // aiFillForm(parsedData);
+    console.log('[AI] Recognition placeholder – API not connected yet');
+    alert(T[lang].aiFillFail || 'AI API not connected yet');
+  } catch(err) {
+    console.error('[AI] Error:', err);
+    alert(T[lang].aiFillFail || 'Recognition failed');
+  } finally {
+    btn.classList.remove('loading');
+    label.textContent = origText;
+  }
+}
+
+function aiFillForm(data){
+  if(!data) return;
+  if(data.shipmentMode){
+    const card = document.querySelector(`.mode-card[data-mode="${data.shipmentMode}"]`);
+    if(card) selectMode(card);
+  }
+  if(data.origin) document.getElementById('origin').value = data.origin;
+  if(data.destination) document.getElementById('destination').value = data.destination;
+  if(data.tradeTerms) document.getElementById('tradeTerms').value = data.tradeTerms;
+  if(data.commodity) document.getElementById('commodity').value = data.commodity;
+  if(data.grossWeight) document.getElementById('grossWeight').value = data.grossWeight;
+  if(data.volume) document.getElementById('volume').value = data.volume;
+  if(data.pieces) document.getElementById('pieces').value = data.pieces;
+  if(data.containerType) document.getElementById('containerType').value = data.containerType;
+  if(data.containerQty) document.getElementById('containerQty').value = data.containerQty;
+  if(data.companyName) document.getElementById('companyName').value = data.companyName;
+  if(data.contactPerson) document.getElementById('contactPerson').value = data.contactPerson;
+  if(data.email) document.getElementById('email').value = data.email;
+  if(data.phone) document.getElementById('phone').value = data.phone;
+  if(data.remarks) document.getElementById('remarks').value = data.remarks;
 }
 
 // ======================= Transport Mode =======================
@@ -1001,8 +1323,8 @@ function validateForm(){
   const fields = [
     {id:'origin'}, {id:'destination'}, {id:'cargoReadyDate'},
     {id:'commodity'}, {id:'grossWeight'}, {id:'volume'}, {id:'pieces'},
-    {id:'companyName'}, {id:'contactPerson'},
-    {id:'email', type:'email'}
+    {id:'contactPerson'},
+    {id:'email', type:'email', optional:true}
   ];
   fields.forEach(f => {
     const el = document.getElementById(f.id);
@@ -1010,8 +1332,11 @@ function validateForm(){
     if(!wrap) return;
     const val = el.value.trim();
     let err = false;
-    if(!val){ err = true; }
-    else if(f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){ err = true; }
+    if(!val){
+      err = !f.optional;
+    } else if(f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
+      err = true;
+    }
     wrap.classList.toggle('has-error', err);
     if(err) valid = false;
   });
@@ -1090,6 +1415,141 @@ function copyCode(){
 
 function closeModal(){
   document.getElementById('successModal').classList.remove('show');
+}
+
+const SURCHARGE_PORTS = [
+  { key:'SHA', zh:'上海', en:'Shanghai', th:'เซี่ยงไฮ้', vi:'Thượng Hải' },
+  { key:'NGB', zh:'宁波', en:'Ningbo', th:'หนิงโป', vi:'Ninh Ba' },
+  { key:'SK', zh:'蛇口（深圳）', en:'Shekou (Shenzhen)', th:'เสอโข่ว (เซินเจิ้น)', vi:'Shekou (Thâm Quyến)' },
+  { key:'XMN', zh:'厦门', en:'Xiamen', th:'เซี่ยเหมิน', vi:'Hạ Môn' },
+  { key:'NS', zh:'南沙（广州）', en:'Nansha (Guangzhou)', th:'หนานซา (กวางโจว)', vi:'Nam Sa (Quảng Châu)' },
+  { key:'TSN', zh:'天津', en:'Tianjin', th:'เทียนจิน', vi:'Thiên Tân' },
+  { key:'TAO', zh:'青岛', en:'Qingdao', th:'ชิงเต่า', vi:'Thanh Đảo' },
+];
+const SURCHARGE_CARRIERS = [
+  { key:'COSCO', dthc20:830, dthc40:1250, doFee:500 },
+  { key:'JJ TRANS', dthc20:825, dthc40:1225, doFee:450 },
+  { key:'EVERGREEN', dthc20:661, dthc40:992, doFee:500 },
+  { key:'TS Line', dthc20:825, dthc40:1230, doFee:450 },
+  { key:'YML', dthc20:740, dthc40:1110, doFee:500 },
+  { key:'HAL', dthc20:840, dthc40:1260, doFee:450 },
+  { key:'GOSU', dthc20:850, dthc40:1700, doFee:450 },
+  { key:'OOCL', dthc20:728, dthc40:1014, doFee:450 },
+  { key:'NOL', dthc20:800, dthc40:1240, doFee:450 },
+  { key:'MSK', dthc20:800, dthc40:1200, doFee:450 },
+];
+const surchargeFilter = { carrier:'', port:'' };
+
+function initSurchargeFilters(){
+  const carrierBtn = document.getElementById('carrierPickerBtn');
+  const carrierMenu = document.getElementById('carrierPickerMenu');
+  const carrierWrap = document.getElementById('carrierPicker');
+  const portBtn = document.getElementById('portPickerBtn');
+  const portMenu = document.getElementById('portPickerMenu');
+  const portWrap = document.getElementById('portPicker');
+  if(!carrierBtn || !carrierMenu || !carrierWrap || !portBtn || !portMenu || !portWrap) return;
+
+  carrierBtn.textContent = surchargeFilter.carrier || t('allCarriers');
+  portBtn.textContent = surchargeFilter.port
+    ? (SURCHARGE_PORTS.find(p=>p.key===surchargeFilter.port)?.[lang] || SURCHARGE_PORTS.find(p=>p.key===surchargeFilter.port)?.en || t('allPorts'))
+    : t('allPorts');
+
+  carrierMenu.innerHTML = [
+    `<div class="surcharge-picker-item ${surchargeFilter.carrier ? '' : 'active'}" data-value="">${t('allCarriers')}</div>`,
+    ...SURCHARGE_CARRIERS.map(c => `<div class="surcharge-picker-item ${surchargeFilter.carrier===c.key ? 'active' : ''}" data-value="${c.key}">${c.key}</div>`)
+  ].join('');
+  portMenu.innerHTML = [
+    `<div class="surcharge-picker-item ${surchargeFilter.port ? '' : 'active'}" data-value="">${t('allPorts')}</div>`,
+    ...SURCHARGE_PORTS.map(p => `<div class="surcharge-picker-item ${surchargeFilter.port===p.key ? 'active' : ''}" data-value="${p.key}">${p[lang] || p.en}</div>`)
+  ].join('');
+
+  if(carrierWrap.dataset.inited === '1') return;
+  carrierWrap.dataset.inited = '1';
+
+  carrierBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    portWrap.classList.remove('open');
+    carrierWrap.classList.toggle('open');
+  });
+  portBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    carrierWrap.classList.remove('open');
+    portWrap.classList.toggle('open');
+  });
+  carrierMenu.addEventListener('click', function(e){
+    const item = e.target.closest('.surcharge-picker-item');
+    if(!item) return;
+    surchargeFilter.carrier = item.dataset.value || '';
+    carrierWrap.classList.remove('open');
+    initSurchargeFilters();
+    renderSurchargeList();
+  });
+  portMenu.addEventListener('click', function(e){
+    const item = e.target.closest('.surcharge-picker-item');
+    if(!item) return;
+    surchargeFilter.port = item.dataset.value || '';
+    portWrap.classList.remove('open');
+    initSurchargeFilters();
+    renderSurchargeList();
+  });
+  document.addEventListener('click', function(e){
+    if(!carrierWrap.contains(e.target)) carrierWrap.classList.remove('open');
+    if(!portWrap.contains(e.target)) portWrap.classList.remove('open');
+  });
+}
+
+function renderSurchargeList(){
+  const carrierVal = surchargeFilter.carrier;
+  const portVal = surchargeFilter.port;
+  const list = document.getElementById('surchargeList');
+  if(!list) return;
+
+  const rows = [];
+  SURCHARGE_CARRIERS.forEach(c => {
+    if(carrierVal && c.key !== carrierVal) return;
+    SURCHARGE_PORTS.forEach(p => {
+      if(portVal && p.key !== portVal) return;
+      rows.push({ carrier:c.key, portLabel:(p[lang] || p.en), ...c });
+    });
+  });
+
+  if(!rows.length){
+    list.innerHTML = `<div class="surcharge-empty">${t('surchargeNoData')}</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map(r => `
+    <div class="surcharge-card">
+      <div class="surcharge-card-head">
+        <span>${r.carrier}</span>
+        <span class="port">${r.portLabel}</span>
+      </div>
+      <div class="surcharge-fees">
+        <div class="fee-item">
+          <div class="k">${t('dthc20')}</div>
+          <div class="v"><span>${r.dthc20}</span><span class="u">${t('rmb')}</span></div>
+        </div>
+        <div class="fee-item">
+          <div class="k">${t('dthc40')}</div>
+          <div class="v"><span>${r.dthc40}</span><span class="u">${t('rmb')}</span></div>
+        </div>
+        <div class="fee-item">
+          <div class="k">${t('doFee')}</div>
+          <div class="v"><span>${r.doFee}</span><span class="u">${t('rmb')}</span></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openSurchargeModal(){
+  initSurchargeFilters();
+  renderSurchargeList();
+  document.getElementById('surchargeModal').classList.add('show');
+  lucide.createIcons();
+}
+function closeSurchargeModal(){
+  document.getElementById('surchargeModal').classList.remove('show');
 }
 
 // ======================= Query =======================
